@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Predible-PACS Explorer</title>
+    <link rel="icon" type="image/x-icon" href="images/logo512.png">
+    <link rel="stylesheet" type="text/css" href="css/semantic/dist/semantic.css">
+    <script>
+    if (typeof module === 'object') {
+        window.module = module;
+        module = undefined;
+    }
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <meta charset="UTF-8" name="referrer" content="no-referrer">
+    <script type="text/javascript" src="css/semantic/dist/semantic.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/custom.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui-calendar/0.0.8/calendar.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui-calendar/0.0.8/calendar.css">
+    <script src="./js/auth.js"></script>
+    <style type="text/css">
+    body {
+        background-color: initial;
+    }
+
+    .ui.form input:not([type]),
+    .ui.form input[type="email"],
+    .ui.form input[type="number"],
+    .ui.form input[type="password"],
+    .ui.form input[type="tel"],
+    .ui.form input[type="text"] {
+        padding: 0.378571em 0.5em;
+        background-color: initial;
+        color: initial;
+        border-radius: 0px;
+    }
+
+    .ui.form input:not([type]):focus,
+    .ui.form input[type="email"]:focus,
+    .ui.form input[type="number"]:focus,
+    .ui.form input[type="password"]:focus,
+    .ui.form input[type="search"]:focus,
+    .ui.form input[type="tel"]:focus,
+    .ui.form input[type="text"]:focus {
+        background-color: initial;
+        color: initial;
+        border-radius: 0px;
+    }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar Starts-->
+    <div class="ui secondary menu">
+        <div class="ui container">
+            <a href="./config.html" class="item">
+                <img src="./images/Settings.png" style="width: 19px;height: 19px;" />
+            </a>
+            <a href="javascript:void(0)" onclick="logout()" style="position: relative;left: 10px;" class="item">
+            <img src="./images/Logout.png" style="width: 19px;height: 21px;" />
+            </a>
+            <div class="right menu">
+                <a class="item">
+                    <img src="./images/Banners/logo.png" style="width: 120px;" />
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Navbar Ends -->
+    <!--Search  Form -->
+    <br/>
+    <div id="pageloader" style="display: none;width: 100%;height: 100%;position: fixed;" class="ui active dimmer">
+        <div class="ui loader"></div>
+    </div>
+    <div class="ui container">
+        <div class="ui grid">
+            <div class="one wide column">
+            </div>
+            <div class="fourteen wide column">
+                <div class="row">
+                    <div>
+                        Find your studies using the appropriate filters
+                    </div>
+                </div>
+                <br/>
+                <div class="sixteen wide column">
+                    <div class="ui equal width form">
+                        <div class="fields">
+                            <div class="three wide field">
+                                <input type="text" name="StudyID" placeholder="Study ID">
+                            </div>
+                            <p style="margin-top: 5px;">OR</p>
+                            <!-- <div class="one wide field">
+                                <center></center>
+                            </div> -->
+                            <div class="three wide field">
+                                <input type="text" name="PatientID" placeholder="Patient ID">
+                            </div>
+                            <p style="margin-top: 5px;">|</p>
+                            <div class="three wide field">
+                                <div class="ui calendar" id="fromDate">
+                                    <div class="ui input left icon">
+                                        <i style="margin-left: -10px;" class="calendar icon"></i>
+                                        <input type="text" placeholder="From">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="three wide field">
+                                <div class="one column" style="padding-left: 0px;">
+                                    <div class="ui calendar" id="toDate">
+                                        <div class="ui input left icon">
+                                            <i style="margin-left: -10px;" class="calendar icon"></i>
+                                            <input type="text" placeholder="To">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="two wide field">
+                                <button id="formSubmit" style="width: 100%;padding:0.571429em 0.78571429em" class="ui button"><i class="ui search icon"></i>Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <br/>
+        </div>
+        <div class="ui grid">
+            <div class="row">
+                <div class="one wide column">
+                </div>
+                <div class="fourteen wide column">
+                    <!-- <br/> -->
+                    <!-- Accordion -->
+                    <!-- <div class="ui accordion" id="accordionSection">
+                    </div> -->
+                    <div class="ui modal">
+                        <i class="close icon"></i>
+                        <div class="header">
+                            The Series are being uploaded. You will be notified by email when its done.
+                        </div>
+                        <div class="actions">
+                            <div class="ui green deny button">
+                                OK
+                            </div>
+                            <!-- <div id='sendSelection' class="ui positive right labeled icon button">
+                                OK
+                                <i class="checkmark icon"></i>
+                            </div> -->
+                            <br/>
+                        </div>
+                    </div>
+                    <div>
+                        <table id="tablelist" style="display: none" class='ui styled accordion collapsing table'>
+                            <thead>
+                                <th>Patient ID</th>
+                                <th>Patient Name</th>
+                                <th>Patient Sex</th>
+                                <th>Study Description</th>
+                                <th>Study Date</th>
+                                <th>Study Id</th>
+                                <th>DOB</th>
+                            </thead>
+                            <tbody id="showList">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="three wide column">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="./js/dashboard.js"></script>
+    <script type="text/javascript">
+    function logout() {
+        localStorage.setItem("token", '')
+        window.location.href = "index.html";
+    }
+    </script>
+    <script>
+    if (window.module) module = window.module;
+    </script>
+</body>
+
+</html>

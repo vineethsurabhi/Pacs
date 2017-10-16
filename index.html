@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Predible-PACS Explorer</title>
+    <script>
+    if (typeof module === 'object') { window.module = module;
+        module = undefined; }
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/semantic/dist/semantic.css">
+    <script src="css/semantic/dist/semantic.js"></script>
+    <link rel="icon" type="image/x-icon" href="images/logo512.png">
+    <link rel="stylesheet" type="text/css" href="css/custom.css">
+    <style>
+        body {
+            background-color: #373737;
+            background-image:url('./images/Banners/Asset 65.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Starts -->
+        <div class="ui secondary menu">
+            <div class="ui container">
+                <a href="javascript:void(0)" class="item">
+                    <h3 style="margin-bottom: -30px;">Experience the <br/> Future of Radiology</h3>
+                </a>
+                <div class="right menu">
+                    <a class="item">
+                    <img src="./images/Banners/logo.png" style="width: 120px;" />
+                </a>
+                </div>
+            </div>
+        </div>
+    <!-- Navbar Ends -->
+    <div class="ui container">
+        <div class="ui grid">
+            <div class="two wide column">
+            </div>
+            <div class="ten wide column">
+                
+            </div>
+            <div class="four wide column">
+                <div class="ui card">
+                    <div class="ui content">
+                        <form class="ui form" enctype="multipart/form-data">
+                            <div class="field">
+                                <input type="email" name="email" placeholder="Email ID">
+                            </div>
+                            <div class="field" style="margin-bottom: 0.2em;">
+                                <input type="password" name="password" placeholder="Password">
+                            </div>
+                            <a href="https://liver.prediblehealth.com/forgot" style="font-size: 11px;color: rgba(0,0,0,0.5);">Forgot Password?</a>
+                            <button style="width:100%; margin-top:0.3em;" class="ui button teal" id="login" type="submit">Login</button>
+                        </form>
+                    </div>
+                </div>
+                <br/>
+                <div id="status">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- SCRIPTS -->
+    <script type="text/javascript" src="./js/auth.js"></script>
+    <script>
+    if (window.module) module = window.module;
+    </script>
+</body>
+
+</html>
