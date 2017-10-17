@@ -80,7 +80,7 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
                                                     </div>\
                                                     <div class="six wide column">\
                                                     <select class="ui dropdown keySelect right" data-series='+ JSON.stringify(event.SeriesDescription) +' id='+ event.SeriesInstanceUID +'>\
-                                                        <option class="item" value="">Select Key</option>\
+                                                        <option class="item" value="">Select Series</option>\
                                                         <option class="item" value="ARTERIAL" data-seriesid=' + event.SeriesInstanceUID + ' data-series="ARTERIAL">ARTERIAL</option>\
                                                         <option class="item" value="PORTAL" data-seriesid=' + event.SeriesInstanceUID + ' data-series="PORTAL">PORTAL</option>\
                                                         <option class="item" value="VENOUS" data-seriesid=' + event.SeriesInstanceUID + ' data-series="VENOUS">VENOUS</option>\
@@ -154,7 +154,7 @@ var header = $('<div class="ui grid">\
 //                                         </div>\
 //                                         <div class="seven wide column">\
 //                                         <select class="ui dropdown keySelect right" id='+ event.SeriesInstanceUID +'>\
-//                                             <option class="item" value="">Select Key</option>\
+//                                             <option class="item" value="">Select Series</option>\
 //                                             <option class="item" value="ARTERIAL" data-seriesid=' + event.SeriesInstanceUID + ' data-series="ARTERIAL">ARTERIAL</option>\
 //                                             <option class="item" value="PORTAL" data-seriesid=' + event.SeriesInstanceUID + ' data-series="PORTAL">PORTAL</option>\
 //                                             <option class="item" value="VENOUS" data-seriesid=' + event.SeriesInstanceUID + ' data-series="VENOUS">VENOUS</option>\
@@ -333,7 +333,7 @@ var last_focus;
 
 $("#list-items").on('focus','div.keySelect', function(event){
     event.preventDefault();
-    if($(this).dropdown('get text') != "Select Key" || $(this).dropdown('get text') != '' ) {
+    if($(this).dropdown('get text') != "Select Series" || $(this).dropdown('get text') != '' ) {
         last_focus = $(this).dropdown('get text')
     }
 })
@@ -345,7 +345,7 @@ $('#list-items').on('change', 'div.keySelect', function(event) {
 
     var val = (select[0].options[select[0].options.selectedIndex].getAttribute('data-seriesid'))
 
-    if($(this).dropdown('get text') != "Select Key") {
+    if($(this).dropdown('get text') != "Select Series") {
 
         if (!series.includes($(this).dropdown('get text'))) {
             series.push($(this).dropdown('get text'))
@@ -363,23 +363,8 @@ $('#list-items').on('change', 'div.keySelect', function(event) {
                 getContext[$(this).dropdown('get text')] = $(this)
             }
         } else {
-            // console.log('true')
-            // console.log($(this).dropdown('get text'))
 
-            // var index = series.indexOf($(this).dropdown('get text'))
-            // if (index !=-1){
-            //     series.splice(index,1)
-            // }
-
-            // if($(this).dropdown('get text') != "Select Key" || $(this.dropdown('get text')) != undefined ) {
-            //     console.log('came in')
-            //     getContext[last_focus].dropdown('restore defaults') 
-            //     getContext[$(this).dropdown('get text')]=""
-            //     console.log('get cotex')
-            //     console.log(getContext)
-            // }
-
-            if( $(this).dropdown('get text') != "Select Key" && getContext[$(this).dropdown('get text')] !="" ) {
+            if( $(this).dropdown('get text') != "Select Series" && getContext[$(this).dropdown('get text')] !="" ) {
                 getContext[$(this).dropdown('get text')].dropdown('restore defaults')
                 getContext[last_focus]="";
                 finalData[last_focus] = ""
