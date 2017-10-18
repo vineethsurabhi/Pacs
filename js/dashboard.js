@@ -73,10 +73,10 @@
          // Select Level Value
          $(this).addClass('loading');
 
-         var StudyID, PatientID;
+         var StudyID, PatientName;
 
          StudyID = $('input[name=StudyID]').val()
-         PatientID = $('input[name=PatientID]').val()
+         PatientName = $('input[name=PatientName]').val()
 
          var finaldata = {};
 
@@ -127,9 +127,9 @@
 
          if (StudyID != '') {
              finaldata.StudyID = "*" + StudyID + "*";
-         } else if (PatientID != '') {
-             finaldata.PatientID = "*" + PatientID + "*";
-         } else if (fromDate == toDate == undefined && finaldata.StudyID == finaldata.PatientID == '') {
+         } else if (PatientName != '') {
+             finaldata.PatientName = "*" + PatientName + "*";
+         } else if (fromDate == toDate == undefined && finaldata.StudyID == finaldata.PatientName == '') {
              finaldata = {};
          }
 
