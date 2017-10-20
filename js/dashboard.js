@@ -3,10 +3,15 @@
      $('.ui.accordion').first()
          .accordion();
 
+         $('.keySelect')
+         .dropdown();
+
      var selection;
      var value;
      var keySelect;
      var level;
+
+     var finaldata = {};
 
      var syncData = {
          "ARTERIAL": "",
@@ -29,9 +34,56 @@
         "PORTAL":"",
         "VENOUS":""
     }
-     // Initialize Dropdown
-     $('.keySelect')
-         .dropdown();
+
+    // Advanced Search
+    var advancedSearch = false;
+
+    // $("#advancedSearch").on("click",function(){
+    //     if(advancedSearch) {
+    //         console.log('came in')
+    //         $('#advanceSearchParam').fadeIn();
+    //     } else {
+    //         $('#advanceSearchParam').fadeOut();
+    //     }
+    //     advancedSearch = !advancedSearch;
+    // })
+
+    $(document).on('click', '#advancedSearch', function() {
+        // $(this).hide();
+        // $(".searchParams").clone().appendTo("#paramSection");
+        advancedSearch = true;
+        $(this).hide();
+        $('#paramSection').append('<div class="ui grid">\
+                                       <div class="four wide column">\
+                                           <select class="ui dropdown keySelect" id="">\
+                                               <option class="item" value="">Select Key</option>\
+                                               <option class="item" value="PatientName">Patient Name</option>\
+                                               <option class="item" value="PatientSex">Patient Sex</option>\
+                                               <option class="item" value="StudyDescription">Study Description</option>\
+                                               <option class="item" value="StudyInstanceUID">StudyInstanceUID</option>\
+                                               <option class="item" value="SeriesDescription">Series Description</option>\
+                                               <option class="item" value="SeriesNumber">Series Number</option>\
+                                               <option class="item" value="SeriesType">Series Type</option>\
+                                               <option class="item" value="SeriesInstanceUID">SeriesInstanceUID</option>\
+                                           </select>\
+                                       </div>\
+                                       <div class="four wide column">\
+                                           <div class="field" style="margin-top:5px;">\
+                                               <input type="text" name="KeyValue" placeholder="Enter Value">\
+                                           </div>\
+                                       </div>\
+                                       <div class="four wide column">\
+                                            <button id="advancedSearch" style="padding:0.571429em 0.78571429em" class="ui button"><center><i class="ui add icon" style="padding-top: 0.09em;padding-left: 0.16em;"></i></center></button>\
+                                       </div>\
+                                   </div>')
+        $('.keySelect')
+            .dropdown();
+    })
+
+
+    //  // Initialize Dropdown
+    //  $('.keySelect')
+    //      .dropdown();
 
      // Initialize Calendar
      $('.ui.calendar').calendar({
@@ -53,6 +105,24 @@
          }
      })
 
+     $(document).on('keypress', 'input[name=StudyID]', function(e) {
+        var key = e.which;
+        if (key == 13) // the enter key code
+        {
+            $('#formSubmit').click();
+            return false;
+        }
+    })
+
+    $(document).on('keypress', 'input[name=PatientID]', function(e) {
+        var key = e.which;
+        if (key == 13) // the enter key code
+        {
+            $('#formSubmit').click();
+            return false;
+        }
+    })
+
      $(document).on('keypress', '.ui.calendar', function(e) {
          e.preventDefault()
          var key = e.which;
@@ -67,18 +137,72 @@
          e.preventDefault();
      })
 
+
+
      // From Submission
      $('#formSubmit').click(function() {
 
          // Select Level Value
          $(this).addClass('loading');
 
-         var StudyID, PatientName;
-
+         var StudyID, PatientID;
+        finaldata = {};
          StudyID = $('input[name=StudyID]').val()
-         PatientName = $('input[name=PatientName]').val()
+         PatientID = $('input[name=PatientID]').val()
 
-         var finaldata = {};
+         if(advancedSearch == true){
+            keySelect = ($('.keySelect').dropdown('get value'))
+            // console.log('keySelect')
+            // console.log(keySelect)
+   
+            var keyText = [];
+            value = $('input[name=KeyValue]').val()
+   
+            // Push values of each key
+            $('input[name=KeyValue]').each(function() {
+                keyText.push($(this).val())
+            })
+   
+            // console.log('key text')
+            // console.log(keyText)
+   
+            // console.log('typeof')
+            // console.log( keySelect instanceof Array)
+   
+            // Map Object keys with the values
+            if (keySelect instanceof Array) {
+                var data = keySelect.map(function(data, index) {
+                    keyText[index] = "*"+ keyText[index] + "*"
+                    return ({
+                        [data]: keyText[index]
+                    })
+                })
+            } else {
+                keyText[0] = "*" + keyText[0] + "*"
+                var data = { keySelect:keyText[0] + "*" }
+            }
+   
+            // console.log('final')
+            // console.log(data)
+   
+            // Convert resultant array to an object
+            if (keySelect instanceof Array) {
+                finaldata = data.reduce(function(result, item) {
+                    var key = Object.keys(item)[0];
+                    result[key] = item[key];
+                    return result;
+                }, {});
+            } else {
+                finaldata = {
+                    [keySelect]: keyText[0]
+                }
+            }
+            
+            console.log('finaldata')
+            console.log(finaldata)
+
+         }
+
 
          // Select Date
          // console.log('Date Selected')
@@ -124,17 +248,18 @@
 
              finaldata["StudyDate"] = fromDate + "-" + toDate;
          }
-
          if (StudyID != '') {
              finaldata.StudyID = "*" + StudyID + "*";
-         } else if (PatientName != '') {
-             finaldata.PatientName = "*" + PatientName + "*";
-         } else if (fromDate == toDate == undefined && finaldata.StudyID == finaldata.PatientName == '') {
+         } else if (PatientID != '') {
+             finaldata.PatientID = "*" + PatientID + "*";
+         } else if (fromDate == toDate == undefined && finaldata.StudyID == finaldata.PatientID == '') {
              finaldata = {};
          }
 
          console.log('final data')
          console.log(finaldata)
+
+         
 
          //Call for search
          var settings = {
@@ -247,36 +372,6 @@
                         }
                      })
 
-                    //  var List =
-                    //      ("<td colspan=7 style='border:;border-bottom: 3px solid rgb(152,152,152);'><div class='ui three column grid'>\
-                    //             <div class='one column'><center><h5>Arterial</h5>\
-                    //                 <select name='seriesId' data-custom-id='ARTERIAL' class='ArterialSelect ui selection dropdown' >\
-                    //                     <option value=''>select</option>\
-                    //                     " + dropDownData + "\
-                    //                 </select>&nbsp;<div value='ar' class='ui inline loader'></div></center><br/>\
-                    //             </div>\
-                    //             <div class='one column'>\
-                    //                 <center><h5>Portal</h5>\
-                    //                 <select name='seriesId' data-custom-id='PORTAL' class='PortalSelect ui selection dropdown' >\
-                    //                     <option value=''>select</option>\
-                    //                     " + dropDownData + "\
-                    //                 </select>&nbsp;<div value='ar' class='ui inline loader'></div></center><br/>\
-                    //             </div>\
-                    //             <div class='one column'>\
-                    //              <center><h5>Venous</h5>\
-                    //                 <select name='seriesId' data-custom-id='VENOUS' class='VenousSelect ui selection dropdown' >\
-                    //                     <option value=''>select</option>\
-                    //                     " + dropDownData + "\
-                    //                 </select>&nbsp;<div value='ar' class='ui inline loader'></div></center><br/>\
-                    //             </div></div>\
-                    //             <div class='ui grid'>\
-                    //             <div class='row' >\
-                    //                 <div class='sixteen wide column'>\
-                    //                     <center><button id='sendSelectedBtn' class='ui button'>Send Selected</button></center>\
-                    //                 </div>\
-                    //             </div>\
-                    //    </td>")
-
                      var List = ('<td colspan=7>\
                                     <div class="ui gird">\
                                         <div class="row">\
@@ -370,33 +465,11 @@
                  $('#formSubmit').removeClass('loading');
              })
              .fail(function(data) {
-                 alert('Please re-check the conection')
+                 alert('Please re-check the connection')
                  $('#formSubmit').removeClass('loading');
              })
 
      })
-
-     // Select By Series
-    //  $(document).on('change', '[name=seriesId]', function(e) {
-    //      // var btnScope = this;
-    //      // $(btnScope).addClass('loading')
-    //      var SeriesInstanceUID;
-
-    //      SeriesInstanceUID = e.target.value;
-
-    //      console.log(SeriesInstanceUID)
-    //      var seriesType = $(this).attr('data-custom-id');
-
-    //      if (seriesType == "ARTERIAL") {
-    //          syncData.ARTERIAL = SeriesInstanceUID;
-    //      } else if (seriesType == "VENOUS") {
-    //          syncData.VENOUS = SeriesInstanceUID;
-    //      } else if (seriesType == "PORTAL") {
-    //          syncData.PORTAL = SeriesInstanceUID;
-    //      }
-    //  });
-
-     // Send Selection to SYNC
 
      $(document).on('click', '#sendSelectedBtn', function() {
         $('input[type="radio"]:checked').each(function(data,index){
@@ -423,7 +496,7 @@
          });
 
          if( syncData.ARTERIAL == "" ||  syncData.PORTAL == "" ||  syncData.VENOUS == "") {
-             alert('select all the three series')
+             alert('Select Arterial,Venous and Portal series')
          } else {
             $("#pageloader").show('fast', 'swing', function() {
                 send();
@@ -535,22 +608,23 @@
                         $.ajax(settings).done(function(response) {
                                 console.log(response);
                                 console.log('sync completed');
+                                alert('Study uploaded successfully')
                             })
                             .fail(function(message) {
-                                alert('Sync Failed')
+                                alert('Selected study failed during sync phase')
                                 console.log(message)
                                 console.log('Sync Failed')
                                 $("#pageloader").hide();
                             })
                         })
                     .fail(function(message) {
-                        alert('sending failed')
+                        alert('Selected study failed during send phase')
                         console.log(message)
                         $("#pageloader").hide();
                     })
              })
              .fail(function(response){
-                alert('store failed') 
+                alert('Selected study failed during store phase') 
                 $("#pageloader").hide();               
              })
          // })

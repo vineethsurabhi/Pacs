@@ -302,17 +302,17 @@ function send() {
                 console.log('Sync completed');
             })
             .fail(function(response){
-                alert('Selected series failed during sync phase')
+                alert('Selected study failed during sync phase')
                 $("#pageloader").hide();
             })
         })
         .fail(function(response){
-            alert('Selected series failed during send phase')
+            alert('Selected study failed during send phase')
             $("#pageloader").hide();
         })
     })
     .fail(function(response){
-        alert('Selected series failed during send phase')
+        alert('Selected study failed during store phase')
         $("#pageloader").hide();
     })
 }

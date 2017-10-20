@@ -291,7 +291,8 @@ a.text-primary:hover {
 #list-items {
     max-height: 300px;
     min-height: 300px;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 /* Dropzone Style Ends */
@@ -347,3 +348,31 @@ a.text-primary:hover {
 }
 
 /* Study Table Style Ends */
+
+/*Container Style Starts*/
+
+@media only screen and (min-width: 1366px) {
+    .ui.container {
+        width: calc(100% - 7.25%);
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .ui.grid.container {
+        width: calc(100% - 7.25%);
+        !important;
+    }
+
+    .ui.relaxed.grid.container {
+        width: calc(100% - 7.25%);
+        !important;
+    }
+
+    .ui.very.relaxed.grid.container {
+        width: calc(100% - 7.25%);
+        !important;
+    }
+}
+
+
+/*Container Style Ends*/
