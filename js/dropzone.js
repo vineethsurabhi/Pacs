@@ -176,14 +176,17 @@ var finalData = {
     "VENOUS": ""
 }
 
-
-$(document).on('click', '#reset', function(event) {
-    event.preventDefault();
+function resetDropdowns(){
     $('.ui.dropdown').dropdown('restore defaults');
     finalData.ARTERIAL = finalData.PORTAL = finalData.VENOUS = '';
     series = [];
     getContext.ARTERIAL=getContext.PORTAL=getContext.VENOUS=''
     last_focus = "";
+}
+
+$(document).on('click', '#reset', function(event) {
+    event.preventDefault();
+    resetDropdowns();
 })
 
 $(document).on("click", "#sendSelection", function(event) {
@@ -200,6 +203,26 @@ $(document).on("click", "#sendSelection", function(event) {
         })   
     }
 })
+
+function deleteSelection(){
+    var settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": "http://localhost:1337/scu/selection",
+        "method": "DELETE",
+        "headers": {
+          "content-type": "application/json",
+          "cache-control": "no-cache",
+        },
+        "processData": false,
+      }
+      
+      $.ajax(settings).done(function (response) {
+        console.log(response);
+        // resetDropdowns();
+        $("#pageloader").hide();
+      });
+}
 
 function send() {
     var series_length;
@@ -236,11 +259,13 @@ function send() {
                 })
                 .fail(function(response){
                     console.log(reponse)
+                    deleteSelection();
                     alert('Unable to select Arterial,Venous and Portal series.')
                 })
             })
             .fail(function(response){
                 console.log(response)
+                deleteSelection();
                 alert('Error adding series to the selection')
             })
         }
@@ -300,20 +325,23 @@ function send() {
             $.ajax(settings).done(function(response) {
                 console.log(response);
                 console.log('Sync completed');
+                deleteSelection();
+                window.location.href="./success.html";
             })
             .fail(function(response){
+                deleteSelection();
                 alert('Selected study failed during sync phase')
-                $("#pageloader").hide();
+                
             })
         })
         .fail(function(response){
+            deleteSelection();
             alert('Selected study failed during send phase')
-            $("#pageloader").hide();
         })
     })
     .fail(function(response){
+        deleteSelection();        
         alert('Selected study failed during store phase')
-        $("#pageloader").hide();
     })
 }
 

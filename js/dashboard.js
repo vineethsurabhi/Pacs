@@ -608,26 +608,104 @@
                         $.ajax(settings).done(function(response) {
                                 console.log(response);
                                 console.log('sync completed');
-                                alert('Study uploaded successfully')
+                                deleteSCU();
+                                // alert('Study uploaded successfully')
+                                window.location.href="./success.html"
                             })
                             .fail(function(message) {
                                 alert('Selected study failed during sync phase')
                                 console.log(message)
                                 console.log('Sync Failed')
+                                deleteSCU();
                                 $("#pageloader").hide();
                             })
                         })
                     .fail(function(message) {
                         alert('Selected study failed during send phase')
                         console.log(message)
+                        deleteSCU();
                         $("#pageloader").hide();
                     })
              })
              .fail(function(response){
-                alert('Selected study failed during store phase') 
+                alert('Selected study failed during store phase')
+                deleteSCU(); 
                 $("#pageloader").hide();               
              })
          // })
+     }
+
+     function deleteSCU() {
+
+        var settings = {
+            "async": true,
+            "crossDomain": true,
+            "url": "http://localhost:1337/scu",
+            "method": "DELETE",
+            "headers": {
+              "cache-control": "no-cache",
+            }
+          }
+          
+          $.ajax(settings).done(function (response) {
+            console.log(response);
+            resetConfig()
+            $("#pageloader").hide(); 
+          })
+          .fail(function(response){
+              console.log(response)
+              $("#pageloader").hide(); 
+          })
+     }
+
+     function resetConfig() {
+        var settings = {
+            "async": true,
+            "crossDomain": true,
+            "url": "http://localhost:1337/scp",
+            "method": "POST",
+            "headers": {
+                "cache-control": "no-cache",
+            }
+        }
+   
+        $.ajax(settings).done(function(response) {
+            console.log(response)
+
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": "http://localhost:1337/scu",
+                "method": "POST",
+                "headers": {
+                  "content-type": "application/json",
+                  "cache-control": "no-cache",
+                },
+                "processData": false,
+                "data": JSON.stringify({
+                    "AETitle":localStorage.getItem("AETitle"),
+                    "Hostname":localStorage.getItem("Hostname"),
+                    "Port":parseInt(localStorage.getItem("Port"))
+                })
+              }
+              
+              $.ajax(settings).done(function (response) {
+                console.log(response);
+                $("#pageloader").hide();
+                
+                if(response.C_Echo != true){
+                    alert('Server responded with C_ECHO FALSE')
+                }
+              }).fail(function(response){
+                  console.log(response)
+                  $("#pageloader").hide(); 
+                  alert("Failed to reset SCU")
+              })
+
+            }).fail(function(message){
+                $("#pageloader").hide(); 
+                alert('Failed to reset SCP')
+            })
      }
 
  })

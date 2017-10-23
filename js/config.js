@@ -31,13 +31,18 @@
          e.preventDefault();
          var btnScope = $(this);
          $(this).addClass('loading')
-         var data = {
+        
+         var configData = {
              "AETitle": $('input[name=peerAETitle]').val(),
              "Hostname": $('input[name=peerHost]').val(),
              "Port": parseInt($('input[name=peerPort]').val())
          }
-         data = JSON.stringify(data)
 
+         localStorage.setItem("AETitle",configData["AETitle"])
+         localStorage.setItem("Hostname",configData["Hostname"])
+         localStorage.setItem("Port",configData["Port"])
+
+         configData = JSON.stringify(configData)
          var settings = {
              "async": true,
              "crossDomain": true,
@@ -47,7 +52,7 @@
              "headers": {
                  "content-type": "application/json",
              },
-             "data": data
+             "data": configData
          }
 
          $.ajax(settings).done(function(response) {
@@ -66,7 +71,6 @@
                      setTimeout(function() { window.location.href = "dashboard.html" }, 1000)
                      $(btnScope).removeClass('loading');
                  } else {
-
                      var message = "<div class='ui message'>\
                                       <i class='close icon'></i>\
                                       <div class='header'>\
