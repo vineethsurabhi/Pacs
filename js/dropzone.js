@@ -23,7 +23,7 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
 
     var sync = require("./js/sync.js");
 
-    sync.upload('https://liver.predible.com/upload_study', localStorage.getItem("token"), fullpath)
+    sync.upload('https://liver.prediblehealth.com/upload_study', localStorage.getItem("token"), fullpath)
 
     return;
 
