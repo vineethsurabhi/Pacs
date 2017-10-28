@@ -21,8 +21,14 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
         var fullpath = ev.target.files[0].path
     }
 
+    var sync = require("./js/sync.js");
+
+    sync.upload('https://liver.predible.com/upload_study', localStorage.getItem("token"), fullpath)
+
+    return;
+
     var imageUrl = "../images/Asset 48.png"
-    $('.dropZoneOverlay').css('background-image', 'url(' + imageUrl + ')');  
+    $('.dropZoneOverlay').css('background-image', 'url(' + imageUrl + ')');
 
     //console.log(ev.target.files[0].path)
     var data = JSON.stringify({
@@ -49,7 +55,7 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
 
     $.ajax(settings).done(function(response) {
         $("#pageloader").hide();
-        $("#dropzone_text").hide();      
+        $("#dropzone_text").hide();
         console.log(response);
         if(response.results.length > 0) {
             study_json["StudyDate"] = response.results[0].StudyDate;
@@ -104,7 +110,7 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
         } else {
             alert('No Data Found')
         }
-        
+
     }).fail(function(message){
         alert('Read from disk failed')
         $("#pageloader").hide();
@@ -123,12 +129,12 @@ $(document).on('click', '.close_study', function() {
         response_length = 0;
         $("#reset").remove();
         $("#sendSelection").remove();
-        $("#header").remove();        
+        $("#header").remove();
         document.getElementById('drop_zone').type = 'file';
         deleted=1;
     }
     $("div.ui.segment[data-segment-index="+ $(this).attr('data-index') +"]").remove();
-    
+
 })
 
 var series = [];
@@ -200,7 +206,7 @@ $(document).on("click", "#sendSelection", function(event) {
     } else {
         $("#pageloader").show('fast', 'swing', function() {
             send();
-        })   
+        })
     }
 })
 
@@ -216,7 +222,7 @@ function deleteSelection(){
         },
         "processData": false,
       }
-      
+
       $.ajax(settings).done(function (response) {
         console.log(response);
         // resetDropdowns();
@@ -270,12 +276,12 @@ function send() {
             })
         }
     });
-    
+
     study_json["SeriesDescription"] = series_length.selection.map(function(element) {
         console.log(element.series+":"+element.uids.length)
         return ({ [study_info[element.series]] : element.uids.length })
     }, this);
-    
+
     console.log('study_json')
     console.log(study_json)
     // STORE AND SYNC
@@ -331,7 +337,7 @@ function send() {
             .fail(function(response){
                 deleteSelection();
                 alert('Selected study failed during sync phase')
-                
+
             })
         })
         .fail(function(response){
@@ -340,7 +346,7 @@ function send() {
         })
     })
     .fail(function(response){
-        deleteSelection();        
+        deleteSelection();
         alert('Selected study failed during store phase')
     })
 }
@@ -398,7 +404,7 @@ $('#list-items').on('change', 'div.keySelect', function(event) {
                 finalData[last_focus] = ""
                 study_info[last_focus] = ""
             }
-            
+
             if ($(this).dropdown('get text') == "ARTERIAL") {
                 finalData.ARTERIAL = val;
                 study_info.ARTERIAL = select.attr('data-series')
@@ -414,7 +420,7 @@ $('#list-items').on('change', 'div.keySelect', function(event) {
             }
         }
     } else {
-        // getContext[event.target.value].dropdown('restore defaults')        
+        // getContext[event.target.value].dropdown('restore defaults')
         // getContext[event.target.value]="";
     }
 })
