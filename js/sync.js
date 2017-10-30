@@ -19,15 +19,12 @@ var get_zip_pipe = function(filepath, exitStream) {
   return tarfs.pack(filepath).pipe(zlib.createGzip()).pipe(exitStream);
 }
 
-var upload = function upload(url, token, filepath, filename =  rand_name() + '.tar.gz') {
+var zip = function zip(filepath, filename = __dirname + rand_name() + '.tar.gz') {
   var input = get_zip_pipe(filepath, fs.createWriteStream(filename));
-  input.on('close', () => {
-    console.log("sending request");
-    send_request(url, token, filepath, filename);
-  });
+  return input;
 }
 
-var send_request = function(url, token, filepath, filename) {
+var send_request = function(url, token, filename) {
   var form2 = {
     file: fs.createReadStream(filename),
     user_token: token
@@ -52,12 +49,15 @@ var send_request = function(url, token, filepath, filename) {
       if (error) {
         return console.error('upload failed:', error);
       }
+      if (response.statusCode !== 200) {
+        return console.error('recieved error response. Code:', response.statusCode);
+      }
       //console.log('Upload successful!  Server responded with:', body);
       fs.unlinkSync(filename);
     });
 }
 
 module.exports.get_zip_pipe = get_zip_pipe;
-module.exports.upload = upload;
+module.exports.zip = zip;
 module.exports.send_request = send_request;
 module.exports.rand_name = rand_name;

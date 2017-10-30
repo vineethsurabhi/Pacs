@@ -23,12 +23,23 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
 
     var sync = require("./js/sync.js");
 
-    sync.upload('https://liver.prediblehealth.com/upload_study', localStorage.getItem("token"), fullpath)
-
-    return;
-
     var imageUrl = "../images/Asset 48.png"
     $('.dropZoneOverlay').css('background-image', 'url(' + imageUrl + ')');
+    $("#pageloader").show();
+
+    var zip = sync.zip(fullpath);
+    var request;
+    zip.on('close', (arg) => {
+      console.log("sending request");
+      console.log(zip.path);
+      request = sync.send_request('https://liver.prediblehealth.com/upload_study', localStorage.getItem("token"), zip.path);
+      request.on('response', function(response) {
+        alert('File upload completed');
+        $("#pageloader").hide();
+      })
+    });
+
+    return;
 
     //console.log(ev.target.files[0].path)
     var data = JSON.stringify({
@@ -38,7 +49,6 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
         "extension": ""
     })
 
-    $("#pageloader").show();
     var settings = {
         "async": true,
         "crossDomain": true,
