@@ -21,8 +21,8 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui-calendar/0.0.8/calendar.css">
     <script src="./js/auth.js"></script>
     <style type="text/css">
-    body{
-        background-color:#3d3c3c;
+    body {
+        background-color: #3d3c3c;
     }
     </style>
 </head>
@@ -49,76 +49,47 @@
     <br/>
     <br/>
     <br/>
-    <br/>
-    <div id="pageloader" style="display: none;width: 100%;height: 100%;position: fixed;" class="ui active dimmer">
+    <!-- <div id="pageloader" style="display: none;width: 100%;height: 100%;position: fixed;" class="ui active dimmer">
         <div class="ui loader"></div>
+    </div> -->
+    <div id="pageloader" style="display: none;width: 100%;height: 100%;position: fixed;" class="ui active dimmer">
+        <div class="ui container" style="position: absolute;top: 50%;">
+            <div class="ui grid">
+                <div class="ui row">
+                    <div class="four wide column">
+                    </div>
+                    <div class="eight wide column">
+                        <div style="max-width: 80%" class="ui teal progress" data-value="1" data-total="20" id="progress_bar">
+                            <div class="bar"></div>
+                            <div class="label"></div>
+                        </div>
+                    </div>
+                    <div class="four wide column">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-
-    <div class="ui container">
-        <div class="ui grid">
-            <div class="sixteen wide column">
-                <div class="ui grid">
-                    <div class="ui row">
-                        <div class="seven wide column">
+    <div class="ui container" style="height:100%;">
+        <div class="ui grid" style="height:100%;">
+            <div class="sixteen wide column" style="height:100%;">
+                <div class="ui grid" style="height:100%;">
+                    <div class="ui row" style="height:80%;">
+                        <div class="sixteen wide column" class="DropParent" style="height:100%;">
                             <!-- <center><img src="images/logo_text.png" /></center> -->
-                            <div class="dropZoneContainer">
+                            <div class="dropZoneContainer" style="height:100%;">
                                 <input type="file" id="drop_zone" class="FileUpload" webkitdirectory/>
                                 <div class="dropZoneOverlay">
                                     <br/>
                                     <div id="list-items">
                                     </div>
-                                    <center><h3 id="dropzone_text" style="position:absolute;top:200px;left:30px;right:30px;">
+                                    <center>
+                                        <h3 id="dropzone_text" style="position:absolute;top:45%;left:10px;right:30px;">
                                         Drop your studies into this region
                                     </h3></center>
                                 </div>
                                 <!-- <br/> -->
                                 <!-- <br/> -->
-                            </div>
-                        </div>
-                        <div class="two wide column">
-                        </div>
-                        <div class="seven wide column">
-                            <div class="ui card" style="height:450px;">
-                                <div class="ui content">
-                                    <h3 style="margin-bottom:0px;">Please enter configuration details for PACS Integration</h3>
-                                    <hr style="margin-top: -4px;">
-                                    <br/>
-                                    <form class="ui form">
-                                        <div class="field">
-                                            <input type="text" name="peerAETitle" placeholder="AE Title">
-                                        </div>
-                                        <div class="field">
-                                            <input type="text" name="peerHost" placeholder="Host">
-                                        </div>
-                                        <div class="field">
-                                            <input type="text" name="peerPort" placeholder="Port Number">
-                                        </div>
-                                        <br/>
-                                        <button id="submit" class="ui button teal" style="width:100%">Connect</button>
-                                    </form>
-                                </div>
-                            </div>
-
-                            <br/>
-                            <br/>
-                            <div id="configuration">
-                            </div>
-                            <div class="ui modal">
-                                <i class="close icon"></i>
-                                <div class="header">
-                                    The Series are being uploaded. You will be notified by email when its done.
-                                </div>
-                                <div class="actions">
-                                    <div class="ui green deny button">
-                                        OK
-                                    </div>
-                                    <!-- <div id='sendSelection' class="ui positive right labeled icon button">
-                                            OK
-                                            <i class="checkmark icon"></i>
-                                        </div> -->
-                                    <br/>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -129,10 +100,12 @@
     <!--script type="text/javascript" src="./js/config.js"></script-->
     <script type="text/javascript" src="./js/dropzone.js"></script>
     <script type="text/javascript">
-        function logout(){
-            localStorage.setItem("token",'')
-            window.location.href="index.html";
-        }
+    $('ui.teal.progress').progress()
+
+    function logout() {
+        localStorage.setItem("token", '')
+        window.location.href = "index.html";
+    }
     </script>
     <script>
     if (window.module) module = window.module;
