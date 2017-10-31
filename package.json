@@ -1,7 +1,22 @@
 {
-  "name": "PredibleLiver",
+  "name": "PacsExplorer",
   "version": "1.0.0",
-  "description": "Pacs Explorer",
+  "description": "Allows users to upload DICOM files to the predible cloud for processing.",
+  "build": {
+    "appId": "com.electron.PacsExplorer",
+    "productName": "PACS Explorer",
+    "copyright": "Copyright © 2017 Predible",
+    "asar": true,
+    "target": "nsis",
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "runAfterFinish": false,
+      "createDesktopShortcut": true,
+      "installerHeader": "build/header.png"
+    }
+  },
   "main": "main.js",
   "scripts": {
     "start": "electron ."
@@ -14,10 +29,11 @@
     "tutorial",
     "demo"
   ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "author": "Predible",
+  "license": "Proprietary",
   "devDependencies": {
-    "electron": "~1.7.9"
+    "electron": "~1.7.9",
+    "electron-builder": "^19.43.0"
   },
   "dependencies": {
     "request": "^2.83.0",
