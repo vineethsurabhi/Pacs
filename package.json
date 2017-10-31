@@ -19,7 +19,8 @@
   },
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package": "electron-builder"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
