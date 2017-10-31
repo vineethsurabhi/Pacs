@@ -4,8 +4,6 @@ const zlib = require('zlib');
 const request = require('request');
 const stream = require('stream');
 const node_crypto = require('crypto');
-const os = require('os');
-const path = require('path');
 
 var rand_name = function() {
   console.dir(process.versions);
@@ -21,7 +19,7 @@ var get_zip_pipe = function(filepath, exitStream) {
   return tarfs.pack(filepath).pipe(zlib.createGzip({level: zlib.Z_BEST_COMPRESSION})).pipe(exitStream);
 }
 
-var zip = function zip(filepath, filename = path.join(os.tmpdir(), rand_name() + '.tar.gz')) {
+var zip = function zip(filepath, filename = process.cwd() + "/" + rand_name() + '.tar.gz') {
   var input = get_zip_pipe(filepath, fs.createWriteStream(filename));
   return input;
 }

@@ -27,14 +27,14 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
     $('.dropZoneOverlay').css('background-image', 'url(' + imageUrl + ')');
     $("#pageloader").show();
 
-  $('#progress_bar')
-    .progress({
-      percent:90,
-      text: {
-        active  : 'Adding {value} of {total} Files',
-        success : '{total} Files Uploaded!'
-      }
-    });
+    /*$('#progress_bar')
+        .progress({
+          percent:90,
+          text: {
+            active  : 'Adding {value} of {total} Files',
+            success : '{total} Files Uploaded!'
+          }
+        });*/
 
     var zip = sync.zip(fullpath);
     var request;
