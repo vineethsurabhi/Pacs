@@ -22,7 +22,6 @@
     "start": "electron .",
     "package": "electron-builder"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
     "Electron",
     "quick",
