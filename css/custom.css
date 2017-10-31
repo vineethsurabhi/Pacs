@@ -78,6 +78,7 @@ i.icons {
     background:linear-gradient(to left,  rgb(6, 34, 58) 0%,  rgb(26, 59, 86) 100%);
     background:-webkit-linear-gradient(to left,  rgb(6, 34, 58) 0%,  rgb(26, 59, 86) 100%);
     background:-moz-linear-gradient(to left,  rgb(6, 34, 58) 0%,  rgb(26, 59, 86) 100%);
+    border-bottom: 3px solid rgb(19, 195, 188); 
 }
 .ui.secondary.menu > .ui.container {
     background-image: url('../images/Banners/Asset 49.png');
