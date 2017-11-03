@@ -32560,7 +32560,7 @@ a.ui.nag {
   right: 0px;
   bottom: 0px;
   background: #FFFFFF;
-  border-radius: 0.28571429rem;
+  /*border-radius: 0.28571429rem;*/
   -webkit-animation: progress-active 2s ease infinite;
   animation: progress-active 2s ease infinite;
 }

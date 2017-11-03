@@ -384,6 +384,11 @@ a.text-primary:hover {
     color: black;
 }
 
+.ui.active.progress .bar {
+    border-radius: 0px;
+    content:none !important;
+}
+
 /* Study Table Style Ends */
 
 /*Container Style Starts*/
