@@ -6,8 +6,18 @@
     "appId": "com.electron.PacsExplorer",
     "productName": "PACS Explorer",
     "copyright": "Copyright © 2017 Predible",
-    "asar": true,
+    "asar": false,
     "target": "nsis",
+    "files": [
+      "js/**",
+      "images/**",
+      "css/**",
+      "*.html",
+      "*.js",
+      "*.md",
+      "!*.tar.gz",
+      "*.json"
+    ],
     "nsis": {
       "oneClick": false,
       "allowElevation": true,
@@ -36,6 +46,8 @@
     "electron-builder": "^19.43.0"
   },
   "dependencies": {
+    "get-folder-size": "^1.0.0",
+    "moment": "^2.19.1",
     "request": "^2.83.0",
     "tar-fs": "^1.16.0"
   }

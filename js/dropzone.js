@@ -2,6 +2,8 @@ document.ondragover = document.ondrop = (ev) => {
     ev.preventDefault()
 }
 
+const moment = require('moment');
+
 var response_length;
 var study_json = {
     "StudyDate":"",
@@ -21,20 +23,54 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
         var fullpath = ev.target.files[0].path
     }
 
-    var sync = require("./js/sync.js");
-
     var imageUrl = "../images/Asset 48.png"
     $('.dropZoneOverlay').css('background-image', 'url(' + imageUrl + ')');
     $("#pageloader").show();
 
-    /*$('#progress_bar')
-        .progress({
-          percent:90,
-          text: {
-            active  : 'Adding {value} of {total} Files',
-            success : '{total} Files Uploaded!'
-          }
-        });*/
+    function show_progress_compression(obj) {
+      console.log("beep");
+      $('#progress_bar').progress({
+        percent: (obj.bytes_read * 100) / obj.total_size,
+        text: {
+          active: `Compressed ${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB  (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`
+        }
+      });
+      /*
+      {
+        percent:90,
+        text: {
+          active  : 'Adding {value} of {total} Files',
+          success : '{total} Files Uploaded!'
+        }
+      }
+      */
+    }
+
+    function show_progress_upload(obj) {
+      $('#progress_bar').progress({
+        percent: (obj.bytes_read * 100) / obj.total_size,
+        text: {
+          active: `Uploading ${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`
+        }
+      });
+      /*
+      {
+        percent:90,
+        text: {
+          active  : 'Adding {value} of {total} Files',
+          success : '{total} Files Uploaded!'
+        }
+      }
+      */
+    }
+
+    var progressObject = {
+      total_size: 0,
+      bytes_read: 0,
+      rate: 0,
+      eta: 0
+    };
+    var sync = require("./js/sync.js")(show_progress_compression, show_progress_upload, progressObject);
 
     var zip = sync.zip(fullpath);
     var request;
