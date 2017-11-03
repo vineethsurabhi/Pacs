@@ -87,7 +87,7 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
     zip.on('close', (arg) => {
       console.log("sending request");
       console.log(zip.path);
-      request = sync.send_request('https://rgkeojmgkliver.prediblehealth.com/upload_study', localStorage.getItem("token"), zip.path);
+      request = sync.send_request('https://liver.prediblehealth.com/upload_study', localStorage.getItem("token"), zip.path);
       request.on('response', function(response) {
         alert('File upload completed');
         $("#pageloader").hide();

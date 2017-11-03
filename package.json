@@ -6,7 +6,7 @@
     "appId": "com.electron.PacsExplorer",
     "productName": "PACS Explorer",
     "copyright": "Copyright © 2017 Predible",
-    "asar": false,
+    "asar": true,
     "target": "nsis",
     "files": [
       "js/**",
