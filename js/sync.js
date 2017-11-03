@@ -99,7 +99,7 @@ var init = function(zip_cb, upload_cb, error_cb, progressObject) {
       };
 
     return request(settings, function (error, response, body) {
-        if (!error) {
+        if (error) {
           console.error('upload failed:', error);
           error_cb(error);
           return;
