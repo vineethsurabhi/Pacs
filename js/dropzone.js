@@ -64,13 +64,18 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
       */
     }
 
+    function show_error() {
+      alert('Error uploading file');
+      $("#pageloader").hide();
+    }
+
     var progressObject = {
       total_size: 0,
       bytes_read: 0,
       rate: 0,
       eta: 0
     };
-    var sync = require("./js/sync.js")(show_progress_compression, show_progress_upload, progressObject);
+    var sync = require("./js/sync.js")(show_progress_compression, show_progress_upload, show_error, progressObject);
 
     var zip = sync.zip(fullpath);
     var request;
@@ -82,13 +87,9 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
     zip.on('close', (arg) => {
       console.log("sending request");
       console.log(zip.path);
-      request = sync.send_request('https://liver.prediblehealth.com/upload_study', localStorage.getItem("token"), zip.path);
+      request = sync.send_request('https://rgkeojmgkliver.prediblehealth.com/upload_study', localStorage.getItem("token"), zip.path);
       request.on('response', function(response) {
         alert('File upload completed');
-        $("#pageloader").hide();
-      })
-      request.on('error', function(error) {
-        alert('Error uploading file');
         $("#pageloader").hide();
       })
     });

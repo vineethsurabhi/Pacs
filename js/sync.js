@@ -8,7 +8,7 @@ const os = require('os');
 const path = require('path');
 const getFolderSize = require('get-folder-size');
 
-var init = function(zip_cb, upload_cb, progressObject) {
+var init = function(zip_cb, upload_cb, error_cb, progressObject) {
   var fns = {};
   var tar_zip_stream;
   var file_stream;
@@ -99,11 +99,22 @@ var init = function(zip_cb, upload_cb, progressObject) {
       };
 
     return request(settings, function (error, response, body) {
-        if (error) {
-          throw console.error('upload failed:', error);
+        if (!error) {
+          console.error('upload failed:', error);
+          error_cb(error);
+          return;
         }
         if (response.statusCode !== 200) {
-          throw console.error('recieved error response. Code:', response.statusCode);
+          console.error('recieved error response. Code:', response.statusCode, '. Retrying now.');
+          request(settings, function(error, response, body) {
+            if (response.statusCode != 200) {
+              error_cb();
+            }
+
+            clearInterval(cbid);
+            fs.unlinkSync(filename);
+          });
+          return;
         }
         //console.log('Upload successful!  Server responded with:', body);
         clearInterval(cbid);
