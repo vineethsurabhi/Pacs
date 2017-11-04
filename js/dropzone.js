@@ -28,7 +28,7 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
     $("#pageloader").show();
 
     function show_progress_compression(obj) {
-      console.log("beep");
+      require('electron').remote.getCurrentWindow().setProgressBar(obj.bytes_read / obj.total_size);
       $('#progress_bar').progress({
         percent: (obj.bytes_read * 100) / obj.total_size,
         text: {
@@ -47,6 +47,7 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
     }
 
     function show_progress_upload(obj) {
+      require('electron').remote.getCurrentWindow().setProgressBar(obj.bytes_read / obj.total_size);
       $('#progress_bar').progress({
         percent: (obj.bytes_read * 100) / obj.total_size,
         text: {
@@ -89,8 +90,12 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
       console.log(zip.path);
       request = sync.send_request('https://liver.prediblehealth.com/upload_study', localStorage.getItem("token"), zip.path);
       request.on('response', function(response) {
-        alert('File upload completed');
+        //alert('File upload completed');
+        var win = require('electron').remote.getCurrentWindow();
+        win.setProgressBar(-1);
+        win.flashFrame(true);
         $("#pageloader").hide();
+        window.location.href="./success.html";
       })
     });
 
