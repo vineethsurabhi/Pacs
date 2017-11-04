@@ -23,14 +23,26 @@ $(document).ready(function() {
     $.ajax(tokenVerifySettings).done(function(response) {
       console.log(response);
           //token = response;
+          $("#splashScreen").hide()
           localStorage.setItem("token", response)
           if (response != null) {
+              $("#splashScreen").show()
               // document.cookie = "user_token=" + response;
               window.location.href = "./config.html"
           } else {
-
           }
-      })
+      }).fail(function(response){
+        $("#navbar").show()
+        $("#footer").show()
+        $("#splashScreen").hide()
+        $( '<style>body {\
+              background-color: #373737;\
+              background-image: url("./images/Banners/Asset 65.png");\
+              background-size: 100% 100%;\
+              background-repeat: no-repeat;\
+          }</style>' ).appendTo( "body" )
+        $("#loginForm").show();
+      }) 
 
     $("#login").on('click', function(e) {
         e.preventDefault();
