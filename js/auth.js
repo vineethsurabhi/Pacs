@@ -7,8 +7,31 @@ $(document).ready(function() {
         shell.openExternal(this.href);
     });
 
-    // Login 
-    var token;
+    // Login
+    var token = localStorage.getItem('token');
+    var tokenVerifySettings = {
+      "crossDomain": true,
+      "url": "https://liver.prediblehealth.com/validate_token",
+      "method": "POST",
+      "headers": {
+        "content-type": "text/plain"
+      },
+      "processData": false,
+      "data": token
+    }
+
+    $.ajax(tokenVerifySettings).done(function(response) {
+      console.log(response);
+          //token = response;
+          localStorage.setItem("token", response)
+          if (response != null) {
+              // document.cookie = "user_token=" + response;
+              window.location.href = "./config.html"
+          } else {
+
+          }
+      })
+
     $("#login").on('click', function(e) {
         e.preventDefault();
         var btn = $(this);
