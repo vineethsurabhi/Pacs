@@ -50,7 +50,7 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
       $('#progress_bar').progress({
         percent: (obj.bytes_read * 100) / obj.total_size,
         text: {
-          active: `Uploading ${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`
+          active: `Securely uploading ${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`
         }
       });
       /*
