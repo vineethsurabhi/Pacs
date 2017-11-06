@@ -72,6 +72,14 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
 
     var cancel_button = $("#cancel_action");
 
+    var progressObject = {
+      total_size: 0,
+      bytes_read: 0,
+      rate: 0,
+      eta: 0
+    };
+    show_progress_compression(progressObject);
+
     function add_cancel_action(cb) {
       cancel_button.unbind("click");
       cancel_button.click(()=> {
@@ -79,15 +87,17 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
         var win = require('electron').remote.getCurrentWindow();
         win.setProgressBar(-1);
         $("#pageloader").hide();
+        progressObject = {
+          total_size: 0,
+          bytes_read: 0,
+          rate: 0,
+          eta: 0
+        };
+        show_progress_compression(progressObject);
       });
     }
 
-    var progressObject = {
-      total_size: 0,
-      bytes_read: 0,
-      rate: 0,
-      eta: 0
-    };
+
     var sync = require("./js/sync.js")(show_progress_compression, show_progress_upload, add_cancel_action, show_error, progressObject);
 
     var zip = sync.zip(fullpath);
