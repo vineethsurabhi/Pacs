@@ -28,6 +28,13 @@ var init = function(zip_cb, upload_cb, cancel_cb, error_cb, progressObject) {
 
     var calculating = true;
 
+    var file = null;
+
+    if (!fs.statSync(filepath).isDirectory()) {
+      file = path.basename(filepath);
+      filepath = path.dirname(filepath);
+    }
+
     getFolderSize(filepath, (err, size)=>{
       if (err) throw err;
 
@@ -38,6 +45,7 @@ var init = function(zip_cb, upload_cb, cancel_cb, error_cb, progressObject) {
     })
 
     var pack = tarfs.pack(filepath, {
+      entries: file ? [file] : undefined,
       map: function(header) {
         //console.log(header);
         if(calculating)
