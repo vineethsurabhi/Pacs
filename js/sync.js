@@ -8,7 +8,7 @@ const os = require('os');
 const path = require('path');
 const getFolderSize = require('get-folder-size');
 
-var init = function(zip_cb, upload_cb, error_cb, progressObject) {
+var init = function(zip_cb, upload_cb, cancel_cb, error_cb, progressObject) {
   var fns = {};
   var tar_zip_stream;
   var file_stream;
@@ -37,7 +37,7 @@ var init = function(zip_cb, upload_cb, error_cb, progressObject) {
       progressObject.total_size = size;
     })
 
-    return tarfs.pack(filepath, {
+    var pack = tarfs.pack(filepath, {
       map: function(header) {
         //console.log(header);
         if(calculating)
@@ -54,6 +54,13 @@ var init = function(zip_cb, upload_cb, error_cb, progressObject) {
       progressObject.eta = (progressObject.total_size - progressObject.bytes_read)/ (progressObject.rate * 1024 * 1024);
     })
     .pipe(zlib.createGzip({level: zlib.Z_BEST_COMPRESSION})).pipe(exitStream);
+
+    cancel_cb(()=>{
+      pack.destroy();
+      clearInterval(cbid);
+    });
+
+    return pack;
   }
 
   var zip = function zip(filepath, filename = path.join(os.tmpdir(), rand_name() + '.tar.gz')) {
@@ -98,7 +105,7 @@ var init = function(zip_cb, upload_cb, error_cb, progressObject) {
         formData: form2
       };
 
-    return request(settings, function (error, response, body) {
+    var req = request(settings, function (error, response, body) {
         if (error) {
           console.error('upload failed:', error);
           error_cb(error);
@@ -120,6 +127,13 @@ var init = function(zip_cb, upload_cb, error_cb, progressObject) {
         clearInterval(cbid);
         fs.unlinkSync(filename);
       });
+
+      cancel_cb(()=>{
+        req.abort();
+        clearInterval(cbid);
+      });
+
+      return req;
   }
 
 
