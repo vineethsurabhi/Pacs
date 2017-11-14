@@ -35,15 +35,6 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
           active: `Compressed ${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB  (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`
         }
       });
-      /*
-      {
-        percent:90,
-        text: {
-          active  : 'Adding {value} of {total} Files',
-          success : '{total} Files Uploaded!'
-        }
-      }
-      */
     }
 
     function show_progress_upload(obj) {
@@ -51,18 +42,9 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
       $('#progress_bar').progress({
         percent: (obj.bytes_read * 100) / obj.total_size,
         text: {
-          active: `Securely uploading ${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`
+          active: `Securely uploading part ${obj.part}/${obj.parts} ${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`
         }
       });
-      /*
-      {
-        percent:90,
-        text: {
-          active  : 'Adding {value} of {total} Files',
-          success : '{total} Files Uploaded!'
-        }
-      }
-      */
     }
 
     function show_error() {
@@ -83,7 +65,7 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
     function add_cancel_action(cb) {
       cancel_button.unbind("click");
       cancel_button.click(()=> {
-        cb();
+        if (cb) cb();
         var win = require('electron').remote.getCurrentWindow();
         win.setProgressBar(-1);
         $("#pageloader").hide();
@@ -97,29 +79,27 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
       });
     }
 
+    function upload_complete(err) {
+      if (err) return show_error();
+      //alert('File upload completed');
+      var win = require('electron').remote.getCurrentWindow();
+      win.setProgressBar(-1);
+      win.flashFrame(true);
+      $("#pageloader").hide();
+      window.location.href="./success.html";
+    }
 
-    var sync = require("./js/sync.js")(show_progress_compression, show_progress_upload, add_cancel_action, show_error, progressObject);
-
-    var zip = sync.zip(fullpath);
-    var request;
-
-    zip.on('data', (arg) => {
-      console.log(arg);
-    })
-
-    zip.on('finish', (arg) => {
-      console.log("sending request");
-      console.log(zip.path);
-      request = sync.send_request('https://liver.prediblehealth.com/upload_study', localStorage.getItem("token"), zip.path);
-      request.on('response', function(response) {
-        //alert('File upload completed');
-        var win = require('electron').remote.getCurrentWindow();
-        win.setProgressBar(-1);
-        win.flashFrame(true);
-        $("#pageloader").hide();
-        window.location.href="./success.html";
-      })
-    });
+    var sync = require("./js/sync.js");
+    sync.init({
+      filepath: fullpath,
+      token: localStorage.getItem("token"),
+      zip_cb: show_progress_compression,
+      upload_cb: show_progress_upload,
+      cancel_cb: add_cancel_action,
+      error_cb: show_error,
+      success_cb: upload_complete,
+      progressObject: progressObject
+    }).upload();
 
     return;
 
