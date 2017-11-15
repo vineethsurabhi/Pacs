@@ -332,6 +332,10 @@ a.text-primary:hover {
     /*overflow-y: auto;*/
 }
 
+#filePathMessage {
+    text-align: center;
+}
+
 /* Dropzone Style Ends */
 
 /* Study Table Style Starts */
