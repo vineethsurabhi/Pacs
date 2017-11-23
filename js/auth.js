@@ -86,7 +86,7 @@ $(document).ready(function() {
                                       <div class='header'>\
                                         Authentication Failed\
                                       </div>\
-                                      <p>Please re-check login details\
+                                      <p>"+ response.responseText +"\
                                     </p></div><br/>"
                 $('#status').html(message)
             })

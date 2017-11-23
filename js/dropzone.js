@@ -65,19 +65,20 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
       if(diff == 0) {
         diff = 1;
       }
-      console.log(obj.rate)
+      // console.log(obj.rate)
       // console.log((obj.total_size-obj.bytes_read)/obj.rate)
       var read = (obj.total_size*(obj.part-1)+ obj.bytes_read)
-      require('electron').remote.getCurrentWindow().setProgressBar(obj.bytes_read / obj.total_size);
+      require('electron').remote.getCurrentWindow().setProgressBar(read / (obj.parts*obj.total_size));
       $('#progress_bar').progress({
         percent: ( read * 100) / (obj.parts*obj.total_size),
         text: {
           // active: `Securely uploading part ${obj.part}/${obj.parts} ${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`
-            active: `Securely uploading ${Math.floor(read/(1024*1024))} MB of ${(obj.parts*obj.total_size)/(1024*1024)} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration((((obj.total_size*obj.parts)-read)/(obj.rate))/1000).humanize()})`,
+            active: `Securely uploading ${Math.floor(read/(1024*1024))} MB of ${Math.floor(obj.parts*obj.total_size)/(1024*1024)} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration((((obj.total_size*obj.parts)-read)/(obj.rate))/1000).humanize()})`,
             success: `Your study has been uploaded securely`
         },
         onSuccess: function() {
-            $("#pageloader").hide()
+            $("#cancel_action").hide();
+            // $("#pageloader").hide()
         }
       });
     }
