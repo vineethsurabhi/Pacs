@@ -73,7 +73,7 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
         percent: ( read * 100) / (obj.parts*obj.total_size),
         text: {
           // active: `Securely uploading part ${obj.part}/${obj.parts} ${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`
-            active: `Securely uploading ${Math.floor(read/(1024*1024))} MB of ${Math.floor(obj.parts*obj.total_size)/(1024*1024)} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration((((obj.total_size*obj.parts)-read)/(obj.rate))/1000).humanize()})`,
+            active: `Securely uploading ${Math.floor(read/(1024*1024))} MB of ${Math.floor((obj.parts*obj.total_size)/(1024*1024))} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration((((obj.total_size*obj.parts)-read)/(obj.rate))/1000).humanize()})`,
             success: `Your study has been uploaded securely`
         },
         onSuccess: function() {
