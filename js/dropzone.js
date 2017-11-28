@@ -1,8 +1,10 @@
 document.ondragover = document.ondrop = (ev) => {
-    ev.preventDefault()
+    ev.preventDefault();
 }
 
 const moment = require('moment');
+
+var log = require('electron').remote.getGlobal('logObject');
 
 var response_length;
 var study_json = {
@@ -15,21 +17,24 @@ var study_json = {
     "SeriesDescription":[]
 }
 
-document.getElementById('drop_zone').onchange = document.getElementById('drop_zone').ondrop = (ev) => {
+log.info('Opened dropzone');
 
+document.getElementById('drop_zone').onchange = document.getElementById('drop_zone').ondrop = (ev) => {
+    log.info('Study has been dropped to dropzone');
     if (ev.target.files[0] == undefined) {
         var fullpath = ev.dataTransfer.files[0].path;
     } else {
-        var fullpath = ev.target.files[0].path
+        var fullpath = ev.target.files[0].path;
     }
 
     var imageUrl = "../images/Asset 48.png"
     $('.dropZoneOverlay').css('background-image', 'url(' + imageUrl + ')');
     // $("#pageloader").show();
 
-    $("#filePathMessage").html("Are you sure you want to upload study "+fullpath.replace(/^.*[\\\/]/, '')+"?")
+    $("#filePathMessage").html("Are you sure you want to upload study "+fullpath.replace(/^.*[\\\/]/, '')+"?");
     $('#filePathDialog').modal("setting",{
         onApprove:function() {
+            log.info('User approves to upload study');
             $("#pageloader").show();
                 var sync = require("./js/sync.js");
                 sync.init({
@@ -40,11 +45,13 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
                   cancel_cb: add_cancel_action,
                   error_cb: show_error,
                   success_cb: upload_complete,
-                  progressObject: progressObject
+                  progressObject: progressObject,
+                  logObject: log
                 }).upload();
         },
         onDeny: function() {
-            document.getElementById('drop_zone').value=''
+            log.info('User denies to upload study');
+            document.getElementById('drop_zone').value='';
         }
     })
       .modal('show')
@@ -56,6 +63,9 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
         percent: (obj.bytes_read * 100) / obj.total_size,
         text: {
           active: `Compressed ${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB  (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`
+        },
+        onSuccess: function() {
+            log.info('Compression of study is completed.')
         }
       });
     }
@@ -119,10 +129,12 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
     function upload_complete(err) {
       if (err) return show_error();
       //alert('File upload completed');
+      log.info('User successfully uploaded study');
       var win = require('electron').remote.getCurrentWindow();
       win.setProgressBar(-1);
       win.flashFrame(true);
       // $("#pageloader").hide();
+      log.info('Opening success page');
       window.location.href="./success.html";
     }
 

@@ -52,6 +52,7 @@
     "electron-builder": "^19.43.0"
   },
   "dependencies": {
+    "bunyan": "^1.8.12",
     "get-folder-size": "^1.0.0",
     "moment": "^2.19.1",
     "request": "^2.83.0",

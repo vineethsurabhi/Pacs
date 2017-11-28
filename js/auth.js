@@ -1,6 +1,7 @@
 $(document).ready(function() {
-
     var shell = require('electron').shell;
+    var log = require('electron').remote.getGlobal('logObject');
+
     //open links externally by default
     $(document).on('click', 'a[href^="http"]', function(event) {
         event.preventDefault();
@@ -10,39 +11,42 @@ $(document).ready(function() {
     // Login
     var token = localStorage.getItem('token');
     var tokenVerifySettings = {
-      "crossDomain": true,
-      "url": "https://liver.prediblehealth.com/validate_token",
-      "method": "POST",
-      "headers": {
-        "content-type": "text/plain"
-      },
-      "processData": false,
-      "data": token
+        "crossDomain": true,
+        "url": "https://liver.prediblehealth.com/validate_token",
+        "method": "POST",
+        "headers": {
+            "content-type": "text/plain"
+        },
+        "processData": false,
+        "data": token
     }
 
+    log.info('sending token for validation')
+
     $.ajax(tokenVerifySettings).done(function(response) {
-      console.log(response);
-          //token = response;
-          $("#splashScreen").hide()
-          localStorage.setItem("token", response)
-          if (response != null) {
-              $("#splashScreen").show()
-              // document.cookie = "user_token=" + response;
-              window.location.href = "./config.html"
-          } else {
-          }
-      }).fail(function(response){
+        console.log(response);
+        //token = response;
+        $("#splashScreen").hide()
+        localStorage.setItem("token", response)
+        if (response != null) {
+            log.info('token validation successfull')
+            $("#splashScreen").show()
+            // document.cookie = "user_token=" + response;
+            window.location.href = "./config.html"
+        } else {}
+    }).fail(function(response) {
+        log.error('token validation unsuccessful')
         $("#navbar").show()
         $("#footer").show()
         $("#splashScreen").hide()
-        $( '<style>body {\
+        $('<style>body {\
               background-color: #373737;\
               background-image: url("./images/Banners/Asset 65.png");\
               background-size: 100% 100%;\
               background-repeat: no-repeat;\
-          }</style>' ).appendTo( "body" )
+          }</style>').appendTo("body")
         $("#loginForm").show();
-      }) 
+    })
 
     $("#login").on('click', function(e) {
         e.preventDefault();
@@ -68,11 +72,13 @@ $(document).ready(function() {
         }
 
         $.ajax(settings).done(function(response) {
-                console.log(response);
+                // console.log(response);
                 //token = response;
-                btn.removeClass('loading')
-                localStorage.setItem("token", response)
+                btn.removeClass('loading');
+                localStorage.setItem("token", response);
+                localStorage.setItem("user",$('input[name=email]').val());
                 if (response != null) {
+                    log.info('Login successfull');
                     // document.cookie = "user_token=" + response;
                     window.location.href = "./config.html"
                 } else {
@@ -80,13 +86,14 @@ $(document).ready(function() {
                 }
             })
             .fail(function(response) {
+                log.error('Attempted to login with invalid credentials');
                 btn.removeClass('loading')
                 var message = "<div class='ui negative message'>\
                                       <i class='close icon'></i>\
                                       <div class='header'>\
                                         Authentication Failed\
                                       </div>\
-                                      <p>"+ response.responseText +"\
+                                      <p>" + response.responseText + "\
                                     </p></div><br/>"
                 $('#status').html(message)
             })

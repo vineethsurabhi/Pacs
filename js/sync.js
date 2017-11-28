@@ -15,7 +15,6 @@ function hash_name(filepath) {
     md5.update(name);
 
     var hash = md5.digest().toString('hex');
-
     return hash;
   }
 
@@ -37,8 +36,10 @@ function init(options) {
     tries_left: 5,
     files: []
   };
-
+  var log = options.logObject;
+  
   if (!fs.statSync(filepath).isDirectory()) {
+    log.info('Check if the uploaded study is a directory');
     file = path.basename(filepath);
     filepath = path.dirname(filepath);
   }
@@ -46,10 +47,12 @@ function init(options) {
   var filename = path.join(os.tmpdir(), hash_name(filepath) + '.tar.gz');
 
   if (fs.existsSync(filename + ".manifest.json")) {
+    log.info('Checking for existing manifest file');
     console.log("Trying to resume");
     manifest = require(filename + ".manifest.json");
 
     if (manifest.tries_left == 0) {
+      log.info('Removing manifest file');
       fs.unlinkSync(filename + ".manifest.json")
       manifest = {
         ready: false,
@@ -66,7 +69,7 @@ function init(options) {
 
     getFolderSize(filepath, (err, size)=>{
       if (err) throw err;
-
+      log.info('Folder size found' + size);
       console.log("folder size found: ", size);
 
       calculating = false;
@@ -82,6 +85,8 @@ function init(options) {
       },
       finish: function(stream) {
         console.log("closed");
+        log.info('Successfully zipped study');
+        // console.log("closed");
         clearInterval(cbid);
       }
     })
@@ -101,6 +106,7 @@ function init(options) {
 
     options.cancel_cb(()=>{
       delete pack;
+      log.info('Attempting to delete compression stream');
       clearInterval(cbid);
     });
 
@@ -139,6 +145,7 @@ function init(options) {
     function request_cb(error, response, body) {
       if (error) {
         console.error("upload failed:", error);
+        log.error('Error uploading study :' + error);
         options.error_cb(error);
         tries_left--;
         if (tries_left) {
@@ -147,6 +154,7 @@ function init(options) {
         return;
       }
       else if (response.statusCode !== 200) {
+        log.error('Error uploading file' + response.statusCode + ', Retrying');
         console.error("recieved error response. Code:", response.statusCode, ". Retrying now.");
         options.error_cb(new Error("recieved error response. Code:", response.statusCode, ". Retrying now."));
         tries_left--;
@@ -168,15 +176,18 @@ function init(options) {
 
   function upload() {
     if (manifest.ready) {
+      log.info("Resuming upload session");
       console.log("resuming");
       start_sending();
     } else {
       var pack = get_zip_pipe();
       var req;
+      log.info('No previous manifest files found, starting a new upload');
       pack.on("finish", start_sending);
     }
 
     function start_sending() {
+      log.info('Finished splitting');
       var abort = false;
       console.log("finished packing");
       options.cancel_cb(()=> {
@@ -188,7 +199,10 @@ function init(options) {
               user_token: token,
               file_list: manifest.files.join(",")
             }
-          }, ()=>console.log("cancelled"));
+          }, function() {
+            log.info('Sending cancel request to API server');
+            console.log('cancelled');
+          });
       });
       manifest.ready = true;
       manifest.count = (manifest.count || this.counter);
@@ -199,6 +213,8 @@ function init(options) {
       var counter = 0;
       console.log(counter, " parts");
       next();
+      
+
       function next() {
         if (abort) {
           return;
@@ -207,9 +223,12 @@ function init(options) {
         console.log("sending part ", counter + 1);
         options.progressObject.part = counter + 1;
         req = send_request("https://liver.prediblehealth.com/upload_part", token, filename + ".part" + counter, next);
+        log.debug(`Study part ${counter+1} being sent`);
         counter++;
       }
+
       function send_manifest() {
+        log.info('Sending manifest file to DL API');
         request({
             method: 'POST',
             uri: "https://liver.prediblehealth.com/complete_upload",
