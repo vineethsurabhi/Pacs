@@ -5,6 +5,8 @@ class Splitter extends stream.Writable {
   constructor(options) {
     super(options);
 
+    this.sizeCallback = options.modifySize;
+
     this.maxSize = options.maxSize || (100 * 1024 * 1024);
     this.filepath = options.filepath || "./file";
 
@@ -17,6 +19,7 @@ class Splitter extends stream.Writable {
   _write(chunk, encoding, callback) {
     this.fileStream.write(chunk, encoding);
     this.bytesWritten+=chunk.length;
+    this.sizeCallback(chunk.length);
 
     if (this.bytesWritten >= this.maxSize) {
       this.bytesWritten = 0;

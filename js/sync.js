@@ -80,7 +80,7 @@ function init(options) {
         if(calculating)
         options.progressObject.total_size += header.size;
       },
-      finish: function() {
+      finish: function(stream) {
         console.log("closed");
         clearInterval(cbid);
       }
@@ -93,7 +93,10 @@ function init(options) {
     .pipe(zlib.createGzip({level: zlib.Z_BEST_COMPRESSION}))
     .pipe(new Splitter({
       filepath: filename,
-      maxSize: 50 * 1024 *1024
+      maxSize: 50 * 1024 *1024,
+      modifySize: function (size) {
+        options.progressObject.packed_file_size += size;
+      }
     }));
 
     options.cancel_cb(()=>{
@@ -108,13 +111,8 @@ function init(options) {
     var cbid = setInterval(options.upload_cb, 1000, options.progressObject);
     uploadStart = new Date();
 
-    options.progressObject.bytes_read = 0;
     var calculating = true;
-    fs.stat(filename, (err, stat)=> {
-      calculating = false;
-      options.progressObject.total_size = stat.size;
-      //console.log("stat size:", options.progressObject.total_size);
-    });
+    options.progressObject.total_size = options.progressObject.packed_file_size;
 
     var readStream = fs.createReadStream(filename)
     .on('data', (chunk)=>{
@@ -197,6 +195,7 @@ function init(options) {
       console.log(JSON.stringify(manifest));
       fs.writeFileSync(filename + ".manifest.json", JSON.stringify(manifest), {encoding:"utf-8"});
       options.progressObject.parts = (this.counter || manifest.count)+ 1;
+      options.progressObject.bytes_read = 0;
       var counter = 0;
       console.log(counter, " parts");
       next();

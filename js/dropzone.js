@@ -61,19 +61,18 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
     }
 
     function show_progress_upload(obj) {
-      var diff = (obj.parts-obj.part);  
-      if(diff == 0) {
-        diff = 1;
-      }
+      
       // console.log(obj.rate)
       // console.log((obj.total_size-obj.bytes_read)/obj.rate)
-      var read = (obj.total_size*(obj.part-1)+ obj.bytes_read)
-      require('electron').remote.getCurrentWindow().setProgressBar(read / (obj.parts*obj.total_size));
+      var read = obj.bytes_read;
+      var total = obj.total_size;
+      var percent = (read*100)/(total);
+      require('electron').remote.getCurrentWindow().setProgressBar(read / total);
       $('#progress_bar').progress({
-        percent: ( read * 100) / (obj.parts*obj.total_size),
+        percent: percent,
         text: {
           // active: `Securely uploading part ${obj.part}/${obj.parts} ${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`
-            active: `Securely uploading ${Math.floor(read/(1024*1024))} MB of ${Math.floor((obj.parts*obj.total_size)/(1024*1024))} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration((((obj.total_size*obj.parts)-read)/(obj.rate))/1000).humanize()})`,
+            active: `Securely uploading ${Math.floor(read/(1024*1024))} MB of ${Math.floor(total/(1024*1024))} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(((total-read)/(obj.rate))/1000).humanize()})`,
             success: `Your study has been uploaded securely`
         },
         onSuccess: function() {
@@ -94,7 +93,8 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
       total_size: 0,
       bytes_read: 0,
       rate: 0,
-      eta: 0
+      eta: 0,
+      packed_file_size: 0
     };
     show_progress_compression(progressObject);
 
@@ -122,7 +122,7 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
       var win = require('electron').remote.getCurrentWindow();
       win.setProgressBar(-1);
       win.flashFrame(true);
-      $("#pageloader").hide();
+      // $("#pageloader").hide();
       window.location.href="./success.html";
     }
 
