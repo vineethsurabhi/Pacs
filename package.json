@@ -9,9 +9,6 @@
     "asar": true,
     "win": {
       "target": "nsis",
-      "forceCodeSigning": true,
-      "certificateFile": "E:\\workspace\\gitlab\\cert.pfx",
-      "certificatePassword": "",
       "publisherName": "Predible Health"
     },
     "files": [
