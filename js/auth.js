@@ -76,7 +76,7 @@ $(document).ready(function() {
                 //token = response;
                 btn.removeClass('loading');
                 localStorage.setItem("token", response);
-                localStorage.setItem("user",$('input[name=email]').val());
+                localStorage.setItem("user", $('input[name=email]').val());
                 if (response != null) {
                     log.info('Login successfull');
                     // document.cookie = "user_token=" + response;

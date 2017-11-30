@@ -12,7 +12,7 @@
 
      $.ajax(settings).done(function(response) {
          console.log(response);
-     }).fail(function(message){
+     }).fail(function(message) {
          alert('SCP Connection Failed')
      })
 
@@ -31,16 +31,16 @@
          e.preventDefault();
          var btnScope = $(this);
          $(this).addClass('loading')
-        
+
          var configData = {
              "AETitle": $('input[name=peerAETitle]').val(),
              "Hostname": $('input[name=peerHost]').val(),
              "Port": parseInt($('input[name=peerPort]').val())
          }
 
-         localStorage.setItem("AETitle",configData["AETitle"])
-         localStorage.setItem("Hostname",configData["Hostname"])
-         localStorage.setItem("Port",configData["Port"])
+         localStorage.setItem("AETitle", configData["AETitle"])
+         localStorage.setItem("Hostname", configData["Hostname"])
+         localStorage.setItem("Port", configData["Port"])
 
          configData = JSON.stringify(configData)
          var settings = {
@@ -83,8 +83,8 @@
 
                      $(document).on('click', '.message .close', function() {
                          console.log('closing')
-                        $(this).closest('.message').transition('fade');
-                    })
+                         $(this).closest('.message').transition('fade');
+                     })
                  }
              })
              .fail(function(err) {
