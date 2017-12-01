@@ -193,7 +193,7 @@ function init(options) {
             start_sending();
         } else {
             var pack = get_zip_pipe();
-            var req;
+            console.log('No previous manifest files found, starting a new upload');            
             log.info({trace:new Error().stack},'No previous manifest files found, starting a new upload');
             pack.on("finish", start_sending);
         }
