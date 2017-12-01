@@ -1,3 +1,5 @@
+const settings = require("./config.json");
+
 $(document).ready(function() {
     var shell = require('electron').shell;
     var log = require('electron').remote.getGlobal('logObject');
@@ -12,7 +14,7 @@ $(document).ready(function() {
     var token = localStorage.getItem('token');
     var tokenVerifySettings = {
         "crossDomain": true,
-        "url": "https://liver.prediblehealth.com/validate_token",
+        "url": `${settings.urls.API}/validate_token`,
         "method": "POST",
         "headers": {
             "content-type": "text/plain"
@@ -54,7 +56,7 @@ $(document).ready(function() {
         $(this).addClass('loading')
         var settings = {
             "crossDomain": true,
-            "url": "https://liver.prediblehealth.com/generate_user_token",
+            "url": `${settings.urls.API}/generate_user_token`,
             "method": "POST",
             "headers": {
                 "content-type": "application/json",
