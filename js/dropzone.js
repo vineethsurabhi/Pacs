@@ -44,6 +44,7 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
                   upload_cb: show_progress_upload,
                   cancel_cb: add_cancel_action,
                   error_cb: show_error,
+                  abort_cb: abort,
                   success_cb: upload_complete,
                   progressObject: progressObject,
                   logObject: log
@@ -92,9 +93,15 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
       });
     }
 
-    function show_error() {
-      alert('Error uploading file');
-      $("#pageloader").hide();
+    function show_error(err = "Unknown Error") {
+        log.warn(err);
+        alert(err.message);
+    }
+
+    function abort() {
+        log.warn(err);
+        alert("Error uploading file");
+        $("#pageloader").hide();
     }
 
     var cancel_button = $("#cancel_action");
@@ -103,8 +110,7 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
       total_size: 0,
       bytes_read: 0,
       rate: 0,
-      eta: 0,
-      packed_file_size: 0
+      eta: 0
     };
     show_progress_compression(progressObject);
 

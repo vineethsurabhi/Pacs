@@ -34,7 +34,8 @@ function init(options) {
     var manifest = {
         ready: false,
         tries_left: 5,
-        files: []
+        files: [],
+        files_total_size: 0
     };
     var log = options.logObject;
 
@@ -57,7 +58,8 @@ function init(options) {
             manifest = {
                 ready: false,
                 tries_left: 5,
-                files: []
+                files: [],
+                files_total_size: 0
             }
         }
     }
@@ -74,7 +76,15 @@ function init(options) {
 
             calculating = false;
             options.progressObject.total_size = size;
-        })
+        });
+
+        var splitter = new Splitter({
+            filepath: filename,
+            maxSize: 50 * 1024 * 1024,
+            modifySize: function(size) {
+                manifest.files_total_size += size;
+            }
+        });
 
         var pack = tarfs.pack(filepath, {
                 entries: file ? [file] : undefined,
@@ -96,16 +106,11 @@ function init(options) {
                 options.progressObject.eta = (options.progressObject.total_size - options.progressObject.bytes_read) / (options.progressObject.rate * 1024 * 1024);
             })
             .pipe(zlib.createGzip({ level: zlib.Z_BEST_COMPRESSION }))
-            .pipe(new Splitter({
-                filepath: filename,
-                maxSize: 50 * 1024 * 1024,
-                modifySize: function(size) {
-                    options.progressObject.packed_file_size += size;
-                }
-            }));
+            .pipe(splitter);
 
         options.cancel_cb(() => {
-            delete pack;
+            pack.cork();
+            splitter.cork();
             log.info('Attempting to delete compression stream');
             clearInterval(cbid);
         });
@@ -118,7 +123,7 @@ function init(options) {
         uploadStart = new Date();
 
         var calculating = true;
-        options.progressObject.total_size = options.progressObject.packed_file_size;
+        options.progressObject.total_size = manifest.files_total_size;
 
         var readStream = fs.createReadStream(filename)
             .on('data', (chunk) => {
@@ -150,15 +155,21 @@ function init(options) {
                 tries_left--;
                 if (tries_left) {
                     req = request(settings, request_cb);
+                } else {
+                    clearInterval(cbid);
+                    options.abort_cb();
                 }
                 return;
             } else if (response.statusCode !== 200) {
-                log.error('Error uploading file' + response.statusCode + ', Retrying');
-                console.error("recieved error response. Code:", response.statusCode, ". Retrying now.");
-                options.error_cb(new Error("recieved error response. Code:", response.statusCode, ". Retrying now."));
+                log.error(`Error uploading file ${response.statusCode}, Retrying`);
+                console.error(`recieved error response. Code:${response.statusCode}. Retrying now.`);
+                options.error_cb(new Error(`recieved error response. Code:${response.statusCode}. Retrying now.`));                
                 tries_left--;
                 if (tries_left) {
                     req = request(settings, request_cb);
+                } else {
+                    clearInterval(cbid);
+                    options.abort_cb();
                 }
                 return;
             }
@@ -174,23 +185,25 @@ function init(options) {
     }
 
     function upload() {
+        var req;
         if (manifest.ready) {
             log.info("Resuming upload session");
             console.log("resuming");
             start_sending();
         } else {
             var pack = get_zip_pipe();
-            var req;
-            log.info('No previous manifest files found, starting a new upload');
+            log.info("No previous manifest files found, starting a new upload");
+            console.log("No previous manifest files found, starting a new upload");
             pack.on("finish", start_sending);
         }
 
         function start_sending() {
             log.info('Finished splitting');
+            console.log('Finished splitting');
             var abort = false;
-            console.log("finished packing");
             options.cancel_cb(() => {
                 abort = true;
+                req.abort();
                 request({
                     method: 'POST',
                     uri: "https://liver.prediblehealth.com/remove_upload",
@@ -209,6 +222,7 @@ function init(options) {
             fs.writeFileSync(filename + ".manifest.json", JSON.stringify(manifest), { encoding: "utf-8" });
             options.progressObject.parts = (this.counter || manifest.count) + 1;
             options.progressObject.bytes_read = 0;
+            options.progressObject.total_size = manifest.files_total_size;
             var counter = 0;
             console.log(counter, " parts");
             next();
@@ -218,7 +232,7 @@ function init(options) {
                 if (abort) {
                     return;
                 }
-                if (counter == options.progressObject.parts) return send_manifest();
+                if (counter == options.progressObject.parts) return send_manifest(5);
                 console.log("sending part ", counter + 1);
                 options.progressObject.part = counter + 1;
                 req = send_request("https://liver.prediblehealth.com/upload_part", token, filename + ".part" + counter, next);
@@ -226,8 +240,7 @@ function init(options) {
                 counter++;
             }
 
-            function send_manifest() {
-                log.info('Sending manifest file to DL API');
+            function send_manifest(tries_left) {
                 request({
                     method: 'POST',
                     uri: "https://liver.prediblehealth.com/complete_upload",
@@ -235,7 +248,20 @@ function init(options) {
                         user_token: token,
                         file_list: manifest.files.join(",")
                     }
-                }, options.success_cb);
+                }, (err)=> {
+                    if (err && tries_left) {
+                        tries_left--;
+                        send_manifest(tries_left);
+                        return;
+                    } else if (err) {
+                        options.abort_cb();
+                    }
+                    log.info('Sending manifest file to DL API');
+                    fs.unlinkSync(filename + ".manifest.json");
+                    for (var i=0; i < options.progressObject.parts; i++)
+                        fs.unlinkSync(filename + ".part" + i);
+                    options.success_cb(err);
+                });
             }
         }
     }
