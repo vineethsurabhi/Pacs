@@ -32,11 +32,14 @@
         background-color: rgb(55, 55, 54);
         font-family: 'Roboto', sans-serif;
     }
+
     h3 {
         font-family: 'Roboto', sans-serif;
     }
-    .ui.button,.ui.container {
-         font-family: 'Roboto', sans-serif;
+
+    .ui.button,
+    .ui.container {
+        font-family: 'Roboto', sans-serif;
     }
     </style>
 </head>
@@ -82,7 +85,9 @@
     </div>
     <script type="text/javascript">
     function logout() {
-        localStorage.setItem("token", '')
+        localStorage.setItem("token", '');
+        localStorage.setItem("user", '');
+        log.info('User logged out');
         window.location.href = "index.html";
     }
     var shell = require('electron').shell;
