@@ -12,7 +12,8 @@ const settings = require('./config.json')
 const request = require('request');
 var bunyan = require('bunyan');
 var logBuffer = [];
-var user = user;
+function DataLogger() {}
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
@@ -39,8 +40,9 @@ function createWindow() {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        console.log(logBuffer)
-        //Send a logs to API Server 
+        var dataLogger = new DataLogger();
+        dataLogger.sendLogs();
+        //Send logs to API Server 
         mainWindow = null
     })
 }
@@ -69,30 +71,65 @@ app.on('activate', function() {
 
 // Check log length and send to server
 
-function createLogger(user) {
-
-    function DataLogger() {
-    }
-
+function createLogger() {
     DataLogger.prototype.write = function write(record) {
-        mainWindow.webContents.executeJavaScript('localStorage.getItem("user")', true)
-        .then((result) => {
-            record.user = result;
-            delete record.pid;
-            logBuffer.push(record);
-        })
-        if (logBuffer.length > 5) {
-            //Send a logs to API Server 
-            this.clear();
-        }
+        mainWindow.webContents.executeJavaScript('localStorage.getItem("user")')
+            .then((result) => {
+                record.user = result;
+                record.message = record.msg;
+                delete record.msg;
+                delete record.pid;
+                delete record.hostname;
+                delete record.time;
+                delete record.v;
+                var trace = record.trace.split("\n");
+                record.trace = trace[1].trim();
+                logBuffer.push(record);
+                if (logBuffer.length > 5) {
+                    this.sendLogs();
+                }
+                // console.log(logBuffer);
+            })
     };
 
-    DataLogger.prototype.clear = function end() {
+    DataLogger.prototype.sendLogs = function sendLogs() {
+        console.log('sending request')
+        if (logBuffer.length > 0) {
+            var data = {
+                messages: logBuffer
+            };
+
+            var request = require("request");
+
+            var options = {
+                method: 'POST',
+                url: 'http://192.168.3.90:9090/upload_pacs_log',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: data,
+                json: true
+            };
+
+            request(options, function(error, response, body) {
+                if (error) throw new Error(error);
+
+                console.log(body);
+            });
+            //Send logs to API Server 
+            this.clear();
+        } else {
+            console.log('Log is empty');
+        }
+    }
+
+    DataLogger.prototype.clear = function clear() {
         logBuffer = [];
     };
 
     var log = bunyan.createLogger({
         name: 'pacs-explorer',
+        trace: [],
         streams: [{
             type: 'raw',
             level: 20,

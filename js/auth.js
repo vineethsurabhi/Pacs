@@ -23,7 +23,7 @@ $(document).ready(function() {
         "data": token
     }
 
-    log.info('sending token for validation')
+    log.info({trace:new Error().stack}, 'sending token for validation')
 
     $.ajax(tokenVerifySettings).done(function(response) {
         console.log(response);
@@ -31,13 +31,13 @@ $(document).ready(function() {
         $("#splashScreen").hide()
         localStorage.setItem("token", response)
         if (response != null) {
-            log.info('token validation successfull')
+            log.info({trace:new Error().stack},'token validation successfull')
             $("#splashScreen").show()
             // document.cookie = "user_token=" + response;
             window.location.href = "./config.html"
         } else {}
     }).fail(function(response) {
-        log.error('token validation unsuccessful')
+        log.error({trace:new Error().stack},'token validation unsuccessful')
         $("#navbar").show()
         $("#footer").show()
         $("#splashScreen").hide()
@@ -80,7 +80,7 @@ $(document).ready(function() {
                 localStorage.setItem("token", response);
                 localStorage.setItem("user", $('input[name=email]').val());
                 if (response != null) {
-                    log.info('Login successfull');
+                    log.info({trace:new Error().stack},'Login successfull');
                     // document.cookie = "user_token=" + response;
                     window.location.href = "./config.html"
                 } else {
@@ -88,7 +88,7 @@ $(document).ready(function() {
                 }
             })
             .fail(function(response) {
-                log.error('Attempted to login with invalid credentials');
+                log.error({trace:new Error().stack}, 'Attempted to login with invalid credentials');
                 btn.removeClass('loading')
                 var message = "<div class='ui negative message'>\
                                       <i class='close icon'></i>\
