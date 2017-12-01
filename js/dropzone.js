@@ -3,6 +3,7 @@ document.ondragover = document.ondrop = (ev) => {
 }
 
 const moment = require('moment');
+const configuration = require('./config.json');
 
 var log = require('electron').remote.getGlobal('logObject');
 
@@ -39,6 +40,7 @@ document.getElementById('drop_zone').onchange = document.getElementById('drop_zo
                 var sync = require("./js/sync.js");
                 sync.init({
                   filepath: fullpath,
+                  url: configuration.urls.API,
                   token: localStorage.getItem("token"),
                   zip_cb: show_progress_compression,
                   upload_cb: show_progress_upload,

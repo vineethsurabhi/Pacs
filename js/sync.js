@@ -38,6 +38,7 @@ function init(options) {
         files_total_size: 0
     };
     var log = options.logObject;
+    var api = options.url;
 
     if (!fs.statSync(filepath).isDirectory()) {
         log.info('Check if the uploaded study is a directory');
@@ -206,7 +207,7 @@ function init(options) {
                 req.abort();
                 request({
                     method: 'POST',
-                    uri: "https://liver.prediblehealth.com/remove_upload",
+                    uri: `${api}/remove_upload`,
                     formData: {
                         user_token: token,
                         file_list: manifest.files.join(",")
@@ -235,7 +236,7 @@ function init(options) {
                 if (counter == options.progressObject.parts) return send_manifest(5);
                 console.log("sending part ", counter + 1);
                 options.progressObject.part = counter + 1;
-                req = send_request("https://liver.prediblehealth.com/upload_part", token, filename + ".part" + counter, next);
+                req = send_request(`${api}/upload_part`, token, filename + ".part" + counter, next);
                 log.debug(`Study part ${counter+1} being sent`);
                 counter++;
             }
@@ -243,7 +244,7 @@ function init(options) {
             function send_manifest(tries_left) {
                 request({
                     method: 'POST',
-                    uri: "https://liver.prediblehealth.com/complete_upload",
+                    uri: `${api}/complete_upload`,
                     formData: {
                         user_token: token,
                         file_list: manifest.files.join(",")

@@ -7,6 +7,8 @@ const BrowserWindow = electron.BrowserWindow
 const path = require('path')
 const url = require('url')
 
+const settings = require('./config.json')
+
 const request = require('request');
 var bunyan = require('bunyan');
 var logBuffer = [];
@@ -29,7 +31,8 @@ function createWindow() {
     }))
 
     // Open the DevTools.
-    // mainWindow.webContents.openDevTools()
+    if (settings.debug)
+        mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function() {
