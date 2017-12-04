@@ -12,6 +12,7 @@ const settings = require('./config.json')
 const request = require('request');
 var bunyan = require('bunyan');
 var logBuffer = [];
+
 function DataLogger() {}
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -35,14 +36,17 @@ function createWindow() {
     if (settings.debug)
         mainWindow.webContents.openDevTools();
 
+    mainWindow.on('close', function() {
+        //Send logs to API Server 
+        var dataLogger = new DataLogger();
+        dataLogger.sendLogs();
+    })
+
     // Emitted when the window is closed.
     mainWindow.on('closed', function() {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        var dataLogger = new DataLogger();
-        dataLogger.sendLogs();
-        //Send logs to API Server 
         mainWindow = null
     })
 }
@@ -88,39 +92,47 @@ function createLogger() {
                 if (logBuffer.length > 5) {
                     this.sendLogs();
                 }
-                // console.log(logBuffer);
+            })
+            .catch((err) => {
+                console.log(err)
             })
     };
 
     DataLogger.prototype.sendLogs = function sendLogs() {
         console.log('sending request')
-        if (logBuffer.length > 0) {
-            var data = {
-                messages: logBuffer
-            };
+        mainWindow.webContents.executeJavaScript('localStorage.getItem("token")').then((token) => {
+            if (logBuffer.length > 0) {
+                var data = {
+                    messages: logBuffer,
+                    user_token: token
+                };
 
-            var request = require("request");
+                var request = require("request");
 
-            var options = {
-                method: 'POST',
-                url: 'http://192.168.3.90:9090/upload_pacs_log',
-                headers: {
-                    'content-type': 'application/json'
-                },
-                body: data,
-                json: true
-            };
+                var options = {
+                    method: 'POST',
+                    url: `${settings.urls.API}/upload_pacs_log`,
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: data,
+                    json: true
+                };
 
-            request(options, function(error, response, body) {
-                if (error) throw new Error(error);
-
-                console.log(body);
-            });
-            //Send logs to API Server 
-            this.clear();
-        } else {
-            console.log('Log is empty');
-        }
+                request(options, function(error, response, body) {
+                    if (error) throw new Error(error);
+                    console.log(body);
+                });
+                //Send logs to API Server 
+                this.clear();
+                return;
+            } else {
+                console.log('Log is empty');
+            }
+        })
+        .catch((err) => {
+            console.log(err)
+        })
     }
 
     DataLogger.prototype.clear = function clear() {

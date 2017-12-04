@@ -128,7 +128,7 @@
     function logout() {
         localStorage.setItem("token", '');
         localStorage.setItem("user", '');
-        log.info('User logged out.');
+        log.info({ trace: new Error().stack },'User logged out.');
         window.location.href = "index.html";
     }
     </script>
