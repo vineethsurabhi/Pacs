@@ -23,73 +23,68 @@ $(document).ready(function() {
         "data": token
     }
 
-    log.info({trace:new Error().stack}, 'sending token for validation')
+    log.info({ trace: new Error().stack }, 'Testing token validation');
 
     $.ajax(tokenVerifySettings).done(function(response) {
         console.log(response);
         //token = response;
-        $("#splashScreen").hide()
-        localStorage.setItem("token", response)
+        $("#splashScreen").hide();
+        localStorage.setItem("token", response);
         if (response != null) {
-            log.info({trace:new Error().stack},'token validation successfull')
-            $("#splashScreen").show()
+            log.info({ trace: new Error().stack }, 'Token validation successfull, User logged in');
+            $("#splashScreen").show();
             // document.cookie = "user_token=" + response;
-            window.location.href = "./config.html"
+            window.location.href = "./config.html";
         } else {}
     }).fail(function(response) {
-        log.error({trace:new Error().stack},'token validation unsuccessful')
-        $("#navbar").show()
-        $("#footer").show()
-        $("#splashScreen").hide()
+        log.error({ trace: new Error().stack }, 'Token validation failed');
+        $("#navbar").show();
+        $("#footer").show();
+        $("#splashScreen").hide();
         $('<style>body {\
               background-color: #373737;\
               background-image: url("./images/Banners/Asset 65.png");\
               background-size: 100% 100%;\
               background-repeat: no-repeat;\
-          }</style>').appendTo("body")
+          }</style>').appendTo("body");
         $("#loginForm").show();
     })
 
     $("#login").on('click', function(e) {
         e.preventDefault();
         var btn = $(this);
-        $(this).addClass('loading')
-        var settings = {
+        $(this).addClass('loading');
+        var loginSettings = {
             "crossDomain": true,
             "url": `${settings.urls.API}/generate_user_token`,
             "method": "POST",
             "headers": {
                 "content-type": "application/json",
             },
-            // "mimeType":"multipart/form-data",
-            // "xhrFields": {
-            //     withCredentials: true
-            // },
             "processData": false,
             "data": JSON.stringify({
                 "username": $('input[name=email]').val(),
                 "password": $('input[name=password]').val()
             })
-            // "data":form
         }
 
-        $.ajax(settings).done(function(response) {
+        $.ajax(loginSettings).done(function(response) {
                 // console.log(response);
                 //token = response;
                 btn.removeClass('loading');
                 localStorage.setItem("token", response);
                 localStorage.setItem("user", $('input[name=email]').val());
                 if (response != null) {
-                    log.info({trace:new Error().stack},'Login successfull');
+                    log.info({ trace: new Error().stack }, 'Login successfull');
                     // document.cookie = "user_token=" + response;
-                    window.location.href = "./config.html"
+                    window.location.href = "./config.html";
                 } else {
 
                 }
             })
             .fail(function(response) {
-                log.error({trace:new Error().stack}, 'Attempted to login with invalid credentials');
-                btn.removeClass('loading')
+                log.error({ trace: new Error().stack }, 'Attempted to login with invalid credentials');
+                btn.removeClass('loading');
                 var message = "<div class='ui negative message'>\
                                       <i class='close icon'></i>\
                                       <div class='header'>\
@@ -97,7 +92,8 @@ $(document).ready(function() {
                                       </div>\
                                       <p>" + response.responseText + "\
                                     </p></div><br/>"
-                $('#status').html(message)
+                $('#status').html(message);
+                console.log(response.responseText)
             })
     })
 

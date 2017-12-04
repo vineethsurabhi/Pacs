@@ -41,7 +41,7 @@ function init(options) {
     var api = options.url;
 
     if (!fs.statSync(filepath).isDirectory()) {
-        log.info({trace:new Error().stack},'Check if the uploaded study is a directory');
+        log.info({ trace: new Error().stack }, 'Study is a valid directory');
         file = path.basename(filepath);
         filepath = path.dirname(filepath);
     }
@@ -49,12 +49,12 @@ function init(options) {
     var filename = path.join(os.tmpdir(), hash_name(filepath) + '.tar.gz');
 
     if (fs.existsSync(filename + ".manifest.json")) {
-        log.info({trace:new Error().stack},'Checking for existing manifest file');
+        log.info({ trace: new Error().stack }, 'Manifest file exists, trying to resume');
         console.log("Trying to resume");
         manifest = require(filename + ".manifest.json");
 
         if (manifest.tries_left == 0) {
-            log.info({trace:new Error().stack},'Removing manifest file');
+            log.info({ trace: new Error().stack }, 'Removed manifest file');
             fs.unlinkSync(filename + ".manifest.json")
             manifest = {
                 ready: false,
@@ -72,7 +72,7 @@ function init(options) {
 
         getFolderSize(filepath, (err, size) => {
             if (err) throw err;
-            log.info({trace:new Error().stack},'Folder size found: ' + size);
+            log.info({ trace: new Error().stack }, 'Study size found: ' + size);
             console.log("folder size found: ", size);
 
             calculating = false;
@@ -96,14 +96,14 @@ function init(options) {
                 },
                 finish: function(stream) {
                     console.log("closed");
-                    log.info({trace:new Error().stack},'Successfully zipped study');
+                    log.info({ trace: new Error().stack }, 'Study zipped');
                     // console.log("closed");
                     clearInterval(cbid);
                 }
             })
             .on('data', (chunk) => {
                 options.progressObject.bytes_read += chunk.length;
-                options.progressObject.rate = ((options.progressObject.bytes_read / (1024 * 1024)) / ((new Date() - zipStart) / 1000))
+                options.progressObject.rate = ((options.progressObject.bytes_read / (1024 * 1024)) / ((new Date() - zipStart) / 1000));
                 options.progressObject.eta = (options.progressObject.total_size - options.progressObject.bytes_read) / (options.progressObject.rate * 1024 * 1024);
             })
             .pipe(zlib.createGzip({ level: zlib.Z_BEST_COMPRESSION }))
@@ -112,7 +112,7 @@ function init(options) {
         options.cancel_cb(() => {
             pack.cork();
             splitter.cork();
-            log.info({trace:new Error().stack},'Attempting to delete compression stream');
+            log.info({ trace: new Error().stack }, 'Attempted to delete compression stream');
             clearInterval(cbid);
         });
 
@@ -129,7 +129,7 @@ function init(options) {
         var readStream = fs.createReadStream(filename)
             .on('data', (chunk) => {
                 options.progressObject.bytes_read += chunk.length;
-                options.progressObject.rate = ((options.progressObject.bytes_read / (1024 * 1024)) / ((new Date() - uploadStart) / 1000))
+                options.progressObject.rate = ((options.progressObject.bytes_read / (1024 * 1024)) / ((new Date() - uploadStart) / 1000));
                 options.progressObject.eta = (options.progressObject.total_size - options.progressObject.bytes_read) / (options.progressObject.rate * 1024 * 1024);
             });
 
@@ -151,7 +151,7 @@ function init(options) {
         function request_cb(error, response, body) {
             if (error) {
                 console.error("upload failed:", error);
-                log.error({trace:new Error().stack},'Error uploading study :' + error);
+                log.error({ trace: new Error().stack }, 'Error uploading study :' + error);
                 options.error_cb(error);
                 tries_left--;
                 if (tries_left) {
@@ -162,9 +162,9 @@ function init(options) {
                 }
                 return;
             } else if (response.statusCode !== 200) {
-                log.error({trace:new Error().stack},`Error uploading file ${response.statusCode}, Retrying`);
+                log.error({ trace: new Error().stack }, `Error uploading file ${response.statusCode}, Retrying`);
                 console.error(`recieved error response. Code:${response.statusCode}. Retrying now.`);
-                options.error_cb(new Error(`recieved error response. Code:${response.statusCode}. Retrying now.`));                
+                options.error_cb(new Error(`Recieved error response. Code:${response.statusCode}. Retrying now.`));
                 tries_left--;
                 if (tries_left) {
                     req = request(settings, request_cb);
@@ -188,19 +188,19 @@ function init(options) {
     function upload() {
         var req;
         if (manifest.ready) {
-            log.info({trace:new Error().stack},"Resuming upload session");
+            log.info({ trace: new Error().stack }, "Resuming upload session");
             console.log("resuming");
             start_sending();
         } else {
             var pack = get_zip_pipe();
-            console.log('No previous manifest files found, starting a new upload');            
-            log.info({trace:new Error().stack},'No previous manifest files found, starting a new upload');
+            console.log('No previous manifest files found, starting a new upload');
+            log.info({ trace: new Error().stack }, 'No previous manifest files found, starting a new upload');
             pack.on("finish", start_sending);
         }
 
         function start_sending() {
             console.log('Finished splitting');
-            log.info({trace:new Error().stack},'Finished splitting');
+            log.info({ trace: new Error().stack }, 'Finished splitting');
             var abort = false;
             options.cancel_cb(() => {
                 abort = true;
@@ -213,7 +213,7 @@ function init(options) {
                         file_list: manifest.files.join(",")
                     }
                 }, function() {
-                    log.info({trace:new Error().stack},'Sending cancel request to API server');
+                    log.info({ trace: new Error().stack }, 'Sent cancel request to API server');
                     console.log('cancelled');
                 });
             });
@@ -237,7 +237,7 @@ function init(options) {
                 console.log("sending part ", counter + 1);
                 options.progressObject.part = counter + 1;
                 req = send_request(`${api}/upload_part`, token, filename + ".part" + counter, next);
-                log.debug({trace:new Error().stack},`Study part ${counter+1} being sent`);
+                log.debug({ trace: new Error().stack }, `Study part ${counter+1} being sent`);
                 counter++;
             }
 
@@ -249,7 +249,7 @@ function init(options) {
                         user_token: token,
                         file_list: manifest.files.join(",")
                     }
-                }, (err)=> {
+                }, (err) => {
                     if (err && tries_left) {
                         tries_left--;
                         send_manifest(tries_left);
@@ -257,9 +257,9 @@ function init(options) {
                     } else if (err) {
                         options.abort_cb();
                     }
-                    log.info({trace:new Error().stack},'Sending manifest file to DL API');
+                    log.info({ trace: new Error().stack }, 'Sending manifest file to DL API');
                     fs.unlinkSync(filename + ".manifest.json");
-                    for (var i=0; i < options.progressObject.parts; i++)
+                    for (var i = 0; i < options.progressObject.parts; i++)
                         fs.unlinkSync(filename + ".part" + i);
                     options.success_cb(err);
                 });
