@@ -1,5 +1,5 @@
 {
-  "name": "PacsExplorer",
+  "name": "pacs_explorer",
   "version": "1.0.0",
   "description": "Allows users to upload DICOM files to the predible cloud for processing.",
   "build": {
@@ -34,15 +34,9 @@
   "scripts": {
     "start": "electron .",
     "package": "electron-builder .",
-    "postinstall": "npm run package"
+	"postinstall": "npm run package",
+	"lint": "eslint ."
   },
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
-  ],
   "author": "Predible",
   "license": "UNLICENSED",
   "devDependencies": {
