@@ -118,24 +118,24 @@ function createLogger() {
 					body: data,
 					json: true
 				};
-
+				//Send logs to API Server 
 				request(options, function(error, response, body) {
 					if (error) throw new Error(error);
+					console.log("Response");
+					if( response.statusCode == 200 ) {
+						console.log("clearing buffer");
+						logBuffer = [];
+					}
 					console.log(body);
 				});
-				//Send logs to API Server 
-				this.clear();
 				return;
 			} else {
 				console.log("Log is empty");
 			}
 		}).catch((err) => {
+			console.log("Error");
 			console.log(err);
 		});
-	};
-
-	DataLogger.prototype.clear = function clear() {
-		logBuffer = [];
 	};
 
 	var log = bunyan.createLogger({
@@ -144,7 +144,7 @@ function createLogger() {
 		streams: [{
 			type: "raw",
 			level: 20,
-			stream: new DataLogger(),
+			stream: new DataLogger()
 		}],
 	});
 
