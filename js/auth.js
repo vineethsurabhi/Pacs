@@ -22,7 +22,6 @@ $(document).ready(function () {
 		"processData": false,
 		"data": token
 	};
-
 	log.info({ trace: new Error().stack }, "Testing token validation");
 
 	$.ajax(tokenVerifySettings).done(function (response) {
@@ -83,13 +82,13 @@ $(document).ready(function () {
 			.fail(function (response) {
 				log.error({ trace: new Error().stack }, "Attempted to login with invalid credentials");
 				btn.removeClass("loading");
-				var message = "<div class='ui negative message'>\
+				var message = `<div class='ui negative message'>\
                                       <i class='close icon'></i>\
                                       <div class='header'>\
                                         Authentication Failed\
                                       </div>\
-                                      <p>" + response.responseText + "\
-                                    </p></div><br/>";
+                                      <p> ${response.responseText}\
+                                    </p></div><br/>`;
 				$("#status").html(message);
 				console.log(response.responseText);
 			});
@@ -133,13 +132,13 @@ $(document).ready(function () {
 				setTimeout(function () { window.location.href = "index.html"; }, 1000);
 
 			} else {
-				message = "<br/><div class='ui negative message'>\
+				message = `<br/><div class='ui negative message'>\
                                       <i class='close icon'></i>\
                                       <div class='header'>\
                                         Signup Failed\
                                       </div>\
-                                      <p>" + response.message + "\
-                                    </p></div>";
+                                      <p>${response.message}\
+                                    </p></div>`;
 				$("#status").html(message);
 			}
 		});

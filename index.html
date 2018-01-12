@@ -2,10 +2,10 @@
 <html>
 
 <head>
-    <title>Predible-PACS Explorer</title>
+    <title>PredEx</title>
     <link rel="stylesheet" type="text/css" href="css/semantic/dist/semantic.css">
     <script>
-    if (typeof module === 'object') {
+    if (typeof module === "object") {
         window.module = module;
         module = undefined;
     }
@@ -16,8 +16,16 @@
     <link rel="stylesheet" type="text/css" href="css/custom.css">
     <style type="text/css">
     body {
-        /*background-color: #373737;*/
-        background-image: -webkit-radial-gradient(center, ellipse farthest-corner, #949494 0%, #46464A 100%);
+        background: -webkit-radial-gradient(center, ellipse farthest-corner, #949494 0%, #46464A 100%);
+    }
+
+    .ui.ui.secondary.menu {
+        background-image: url('./images/Banners/navbar_background.png');
+        background-size: 100% 100%;
+    }
+
+    .ui.secondary.menu > .ui.container {
+        padding-bottom: 1em;
     }
     </style>
 </head>
@@ -64,6 +72,8 @@
             <div class="ten wide column">
             </div>
             <div class="four wide column">
+                <br/>
+                <br/>
                 <div class="ui card">
                     <div class="ui content">
                         <form class="ui form" enctype="multipart/form-data">
