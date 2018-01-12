@@ -70,7 +70,7 @@ document.getElementById("drop_zone").onchange = document.getElementById("drop_zo
 			$("#progressText").html("Upload files to cloud here");
 			document.getElementById("drop_zone").value = "";
 			$("#navbar").css("border-bottom","3px solid rgb(19, 195, 188)");
-			$("#line").html('');
+			$("#line").html("");
 		}
 	}).modal("show");
 
@@ -78,41 +78,15 @@ document.getElementById("drop_zone").onchange = document.getElementById("drop_zo
 		$("#navbar").css("border-bottom","none");
 		require("electron").remote.getCurrentWindow().setProgressBar(obj.bytes_read / obj.total_size);
 		line.animate(obj.bytes_read / obj.total_size);
-		$("#progressText").html(`${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB  (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`);
-		/*$("#progress_bar").progress({
-			percent: (obj.bytes_read * 100) / obj.total_size,
-			text: {
-				active: `Compressed ${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB  (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`
-			},
-			onSuccess: function() {
-				log.info({ trace: new Error().stack }, "Study compression completed.");
-			}
-		});*/
+		$("#progressText").html(`Compressed ${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB  (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`);
 	}
 
 	function show_progress_upload(obj) {
-
-		// console.log(obj.rate)
-		// console.log((obj.total_size-obj.bytes_read)/obj.rate)
 		var read = obj.bytes_read;
 		var total = obj.total_size;
-		// var percent = (read * 100) / (total);
 		require("electron").remote.getCurrentWindow().setProgressBar(read / total);
-		// line.animate(read / (obj.parts * obj.total_size));
 		line.animate(read/total);
 		$("#progressText").html(`Securely uploading ${Math.floor(read/(1024*1024))} MB of ${Math.floor(total/(1024*1024))} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`);
-		/*$("#progress_bar").progress({
-			percent: percent,
-			text: {
-				// active: `Securely uploading part ${obj.part}/${obj.parts} ${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`
-				active: `Securely uploading ${Math.floor(read/(1024*1024))} MB of ${Math.floor(total/(1024*1024))} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(((total-read)/(obj.rate))/1000).humanize()})`,
-				success: "Your study has been uploaded securely"
-			},
-			onSuccess: function() {
-				$("#cancel_action").hide();
-				// $("#pageloader").hide()
-			}
-		});*/
 	}
 
 	function show_error(err = "Unknown Error") {

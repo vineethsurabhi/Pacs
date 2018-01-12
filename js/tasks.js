@@ -15,7 +15,7 @@ $(document).ready(function() {
 	var settings = {
 		"async": true,
 		"crossDomain": true,
-		"url": "https://liver.prediblehealth.com/get_task_list",
+		"url": `${configuration.urls.API}/get_task_list`,
 		"method": "POST",
 		"headers": {
 			"content-type": "application/json",
@@ -36,15 +36,15 @@ $(document).ready(function() {
 			if (object != null && object.SeriesDescription != undefined) {
 				ui_content = (object.SeriesDescription).map(function(data) {
 					//	data.join(',')
-					return ("<div class='ui grid' style='margin-top:0px;padding-top:0px;padding-bottom:0px;'>\
-								<div class='one wide column' style=''></div>\
-								<div class='six wide column' style=''>\
-									<div>" + (Object.keys(data)[0]) + "</div>\
+					return (`<div class="ui grid" style="margin-top:0px;padding-top:0px;padding-bottom:0px;">\
+								<div class="one wide column"></div>\
+								<div class="six wide column">\
+									<div>${Object.keys(data)[0]}</div>\
 								</div>\
-								<div class='six wide column' style=''>\
-									<div>" + data[Object.keys(data)[0]] + "</div>\
+								<div class="six wide column" style="">\
+									<div>${data[Object.keys(data)[0]]}</div>\
 								</div>\
-							</div>");
+							</div>`);
 				});
 			}
 			if (ui_content != undefined) {
@@ -66,7 +66,7 @@ $(document).ready(function() {
 
 		var check_viewer = function(data) {
 			if ((data.status == 3) || (data.status == 4)) {
-				return ("<a href="+configuration.urls.API+"/task/"+ data.task_id +"><img style='opacity0.85;margin-top: 5px;width: 30px;height: 15px;' src='./images/Asset 2.png' /></a>");
+				return (`<a href="${configuration.urls.API}/task/${data.task_id}"><img style="opacity0.85;margin-top: 5px;width: 30px;height: 15px;" src="./images/Asset 2.png" /></a>`);
 			} else {
 				return ("<img style='margin-top: 5px;width: 30px;height: 19px;' src='./images/Asset 3.png' />");
 			}
@@ -85,7 +85,7 @@ $(document).ready(function() {
 
 		var check_report = function(data) {
 			if (data.status == 4) {
-				return ("<a href='/report/" + data.task_id + "'>View Report</a>");
+				return (`<a href="/report/${data.task_id}">View Report</a>`);
 			} else {
 				return ("");
 			}
@@ -131,31 +131,31 @@ $(document).ready(function() {
 					color = "rgb(255,255,255";
 				}
 
-				var study_accordion = $("<tr class='ui title' style='background-color:" + color + "'>\
-                                            <td>" + check_status(data.status) + "</td>\
-                                            <td>" + format_date(JSON.parse(data.study_json).StudyDate) + "</td>\
-                                            <td>" + checkUndefined(JSON.parse(data.study_json).PatientName) + "</td>\
-                                            <td>" + checkUndefined(JSON.parse(data.study_json).PatientSex) + "</td>\
-                                            <td>" + checkUndefined(JSON.parse(data.study_json).PatientAge) + "</td>\
-                                            <td>" + checkUndefined(JSON.parse(data.study_json).PatientId) + "</td>\
-                                            <td>" + checkUndefined(JSON.parse(data.study_json).StudyDescription) + "</td>\
-                                            <td>" + convert_date(new Date(data.created)) + "</td>\
-                                            <td class='default'>"+ check_viewer(data) +"</td>\
+				var study_accordion = $(`<tr class="ui title" style="background-color:${color}">\
+                                            <td> ${check_status(data.status)} </td>\
+                                            <td> ${format_date(JSON.parse(data.study_json).StudyDate)}</td>\
+                                            <td> ${checkUndefined(JSON.parse(data.study_json).PatientName)}</td>\
+                                            <td> ${checkUndefined(JSON.parse(data.study_json).PatientSex)}</td>\
+                                            <td> ${checkUndefined(JSON.parse(data.study_json).PatientAge)}</td>\
+                                            <td> ${checkUndefined(JSON.parse(data.study_json).PatientId)}</td>\
+                                            <td> ${checkUndefined(JSON.parse(data.study_json).StudyDescription)}</td>\
+                                            <td> ${convert_date(new Date(data.created))}</td>\
+                                            <td class="default">${check_viewer(data)}</td>\
                                         </tr>\
-                                        <tr class='ui content'>\
+                                        <tr class="ui content">\
                                             <td colspan=7>\
-                                                <div class='ui grid' style='margin-bottom:5px;'>\
-                                                    <div class='one wide column'></div>\
-                                                    <div class='six wide column' style='padding-bottom:0px;'>\
+                                                <div class="ui grid" style="margin-bottom:5px;">\
+                                                    <div class="one wide column"></div>\
+                                                    <div class="six wide column" style="padding-bottom:0px;">\
                                                         <div><b>Series Description</b></div>\
                                                     </div>\
-                                                    <div class='six wide column' style='padding-bottom:0px;'>\
+                                                    <div class="six wide column" style="padding-bottom:0px;">\
                                                         <div><b>Number of Images</b></div>\
                                                     </div>\
                                                 </div>\
-                                            " + content_accordion(data.study_json).join("") + "" + "</td>\
-                                            <td colspan=2 style='text-align:right;'>"+check_report(data)+"</td>\
-                                        </tr>");
+                                             ${content_accordion(data.study_json).join("")}</td>\
+                                            <td colspan=2 style="text-align:right;">${check_report(data)}</td>\
+                                        </tr>`);
 				$("#tbody").append(study_accordion);
 			});
 		} else {
