@@ -1,10 +1,10 @@
 {
-  "name": "pacs_explorer",
+  "name": "predex",
   "version": "1.0.0",
   "description": "Allows users to upload DICOM files to the predible cloud for processing.",
   "build": {
-    "appId": "com.electron.PacsExplorer",
-    "productName": "PACS Explorer",
+    "appId": "com.electron.PredEx",
+    "productName": "PredEx",
     "copyright": "Copyright © 2017 Predible",
     "asar": true,
     "win": {
@@ -45,8 +45,10 @@
   },
   "dependencies": {
     "bunyan": "^1.8.12",
+    "electron-cookies": "^1.1.0",
     "get-folder-size": "^1.0.0",
     "moment": "^2.19.1",
+    "progressbar.js": "^1.0.1",
     "request": "^2.83.0",
     "tar-fs": "^1.16.0"
   }

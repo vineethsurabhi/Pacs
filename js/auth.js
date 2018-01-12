@@ -22,7 +22,6 @@ $(document).ready(function () {
 		"processData": false,
 		"data": token
 	};
-
 	log.info({ trace: new Error().stack }, "Testing token validation");
 
 	$.ajax(tokenVerifySettings).done(function (response) {

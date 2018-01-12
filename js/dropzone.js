@@ -4,6 +4,7 @@ document.ondragover = document.ondrop = (ev) => {
 
 const moment = require("moment");
 const configuration = require("./config.json");
+const ProgressBar = require("progressbar.js");
 
 var log = require("electron").remote.getGlobal("logObject");
 
@@ -31,6 +32,15 @@ document.getElementById("drop_zone").onchange = document.getElementById("drop_zo
 		return;
 	}
 
+	var line = new ProgressBar.Line("#line", {
+		easing: "easeInOut",
+		color: "rgb(19, 195, 188)",
+		height: "5px",
+		strokeWidth: 0.3,
+		trailColor:"rgb(101,94,94)",
+		trailWidth: 0.2
+	});
+
 	var imageUrl = "../images/Asset 48.png";
 	$(".dropZoneOverlay").css("background-image", "url(" + imageUrl + ")");
 	// $("#pageloader").show();
@@ -57,13 +67,19 @@ document.getElementById("drop_zone").onchange = document.getElementById("drop_zo
 		},
 		onDeny: function() {
 			log.info({ trace: new Error().stack }, "Study denied to applied.");
+			$("#progressText").html("Upload files to cloud here");
 			document.getElementById("drop_zone").value = "";
+			$("#navbar").css("border-bottom","3px solid rgb(19, 195, 188)");
+			$("#line").html('');
 		}
 	}).modal("show");
 
 	function show_progress_compression(obj) {
+		$("#navbar").css("border-bottom","none");
 		require("electron").remote.getCurrentWindow().setProgressBar(obj.bytes_read / obj.total_size);
-		$("#progress_bar").progress({
+		line.animate(obj.bytes_read / obj.total_size);
+		$("#progressText").html(`${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB  (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`);
+		/*$("#progress_bar").progress({
 			percent: (obj.bytes_read * 100) / obj.total_size,
 			text: {
 				active: `Compressed ${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB  (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`
@@ -71,7 +87,7 @@ document.getElementById("drop_zone").onchange = document.getElementById("drop_zo
 			onSuccess: function() {
 				log.info({ trace: new Error().stack }, "Study compression completed.");
 			}
-		});
+		});*/
 	}
 
 	function show_progress_upload(obj) {
@@ -80,9 +96,12 @@ document.getElementById("drop_zone").onchange = document.getElementById("drop_zo
 		// console.log((obj.total_size-obj.bytes_read)/obj.rate)
 		var read = obj.bytes_read;
 		var total = obj.total_size;
-		var percent = (read * 100) / (total);
+		// var percent = (read * 100) / (total);
 		require("electron").remote.getCurrentWindow().setProgressBar(read / total);
-		$("#progress_bar").progress({
+		// line.animate(read / (obj.parts * obj.total_size));
+		line.animate(read/total);
+		$("#progressText").html(`Securely uploading ${Math.floor(read/(1024*1024))} MB of ${Math.floor(total/(1024*1024))} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`);
+		/*$("#progress_bar").progress({
 			percent: percent,
 			text: {
 				// active: `Securely uploading part ${obj.part}/${obj.parts} ${Math.floor(obj.bytes_read/(1024*1024))} MB of ${Math.floor(obj.total_size/(1024*1024))} MB (${obj.rate.toFixed(2)} MB/s; ETA: ${moment.duration(obj.eta*1000).humanize()})`
@@ -93,7 +112,7 @@ document.getElementById("drop_zone").onchange = document.getElementById("drop_zo
 				$("#cancel_action").hide();
 				// $("#pageloader").hide()
 			}
-		});
+		});*/
 	}
 
 	function show_error(err = "Unknown Error") {

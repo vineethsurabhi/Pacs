@@ -2,139 +2,149 @@
 <html>
 
 <head>
-    <title>Predible-PACS Explorer</title>
-    <script>
-    if (typeof module === 'object') {
-        window.module = module;
-        module = undefined;
-    }
-    </script>
-    <link rel="icon" type="image/x-icon" href="images/logo512.png">
-    <meta charset="UTF-8" name="referrer" content="no-referrer">
-    <link rel="stylesheet" type="text/css" href="css/semantic/dist/semantic.css">
-    <script type="text/javascript" src="js/jquery(3).min.js"></script>
-    <script src="js/jquery(3.1).min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="./result.json"></script>
-    <script type="text/javascript" src="css/semantic/dist/semantic.js"></script>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="./css/custom.css">
-    <style type="text/css">
-    body {
-        background-color: #3d3c3c;
-        font-family: 'Roboto', sans-serif;
-    }
+	<title>PredEx</title>
+	<script>
+	if (typeof module === "object") {
+		window.module = module;
+		module = undefined;
+	}
+	</script>
+	<link rel="icon" type="image/x-icon" href="images/logo512.png">
+	<meta charset="UTF-8" name="referrer" content="no-referrer">
+	<link rel="stylesheet" type="text/css" href="css/semantic/dist/semantic.css">
+	<script type="text/javascript" src="js/jquery(3).min.js"></script>
+	<script src="js/jquery(3.1).min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="./result.json"></script>
+	<script type="text/javascript" src="css/semantic/dist/semantic.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="./css/custom.css">
+	<style type="text/css">
+	body {
+		font-family: 'Roboto', sans-serif;
+		overflow-y: auto;
+	}
 
-    .ui.button,
-    .ui.container {
-        font-family: 'Roboto', sans-serif;
-    }
-    </style>
+	.ui.button,
+	.ui.container {
+		font-family: 'Roboto', sans-serif;
+	}
+
+	.content {
+		min-height: 100%;
+		padding-bottom: 20px;
+		margin-bottom: -20px;
+	}
+
+	.footer,
+	.push {
+		height: 20px;
+	}
+	</style>
 </head>
 
 <body>
-    <!-- Navbar Starts -->
-    <div class="ui secondary menu">
-        <div class="ui container">
-            <a href="javascript:void(0)" onclick="logout()" style="position: relative;left: 0px;" class="item">
-            <img src="./images/Logout.png" style="width: 19px;height: 21px;" />
-            </a>
-            <div class="right menu">
-                <a class="item">
-                    <img src="./images/Banners/logo.png" style="width: 120px;" />
-                </a>
-            </div>
-        </div>
-    </div>
-    <!-- Navbar Ends -->
-    <!-- Login Form -->
-    <br/>
-    <!-- <div id="pageloader" style="display: none;width: 100%;height: 100%;position: fixed;" class="ui active dimmer">
-        <div class="ui loader"></div>
-    </div> -->
-    <div class="ui container">
-        <div id="pageloader" style="display: none;width: 100%;height: 100%;position: fixed;" class="ui active dimmer">
-            <div class="ui" style="position: absolute;top: 50%;width: 100%">
-                <div class="ui grid">
-                    <div class="ui row">
-                        <div class="four wide column">
-                        </div>
-                        <div class="eight wide column">
-                            <div style="max-width: 100%;border:2px solid rgb(19, 195, 188);background-color: white" class="ui teal progress" data-value="1" data-total="20" id="progress_bar">
-                                <div class="bar"></div>
-                                <div class="label" style="margin-top: 8px"></div>
-                            </div>
-                            <button class="ui red basic button" id="cancel_action" name="cancel">
-                                <i class="remove circle outline icon"></i>Cancel
-                            </button>
-                        </div>
-                        <div class="four wide column">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="ui container" style="height:calc(100% - 7.25%);">
-        <div class="ui grid" style="height:100%;">
-            <div class="sixteen wide column" style="height:100%;">
-                <div class="ui grid" style="height:100%;">
-                    <div class="ui row" style="height:calc(100% - 11%);">
-                        <div class="sixteen wide column" class="DropParent" style="height:100%;margin-bottom: 1.5em;">
-                            <!-- <center><img src="images/logo_text.png" /></center> -->
-                            <div class="dropZoneContainer" style="height:100%">
-                                <input type="file" id="drop_zone" class="FileUpload" webkitdirectory/>
-                                <div class="dropZoneOverlay">
-                                    <br/>
-                                    <div id="list-items">
-                                    </div>
-                                    <center>
-                                        <h3 id="dropzone_text" style="position:absolute;top:45%;left:10px;right:30px;">
-                                        Drop your studies into this region
-                                    </h3></center>
-                                </div>
-                                <!-- <br/> -->
-                                <!-- <br/> -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="ui basic modal" id="filePathDialog">
-        <div class="ui icon header">
-            <i class="archive icon"></i>
-        </div>
-        <div class="content">
-            <h3 id="filePathMessage"></h3>
-        </div>
-        <div class="actions">
-            <div class="ui red basic cancel inverted button">
-                <i class="remove icon"></i> No
-            </div>
-            <div class="ui green ok inverted button">
-                <i class="checkmark icon"></i> Yes
-            </div>
-        </div>
-    </div>
-    <div class="ui container" style="  position: absolute;right: 0;bottom: 0;left: 0;padding: 1em;padding-bottom:0.5em;color: white;text-align: center;font-size:0.85em">
-        &copy; Predible Liver v1.0 Beta
-    </div>
-    <!--script type="text/javascript" src="./js/config.js"></script-->
-    <script type="text/javascript" src="./js/dropzone.js"></script>
-    <script type="text/javascript">
-    $('ui.teal.progress').progress()
+	<div class="content">
+		<!-- Navbar Starts -->
+		<div class="ui secondary menu" id="navbar">
+			<div class="ui container">
+				<a href="javascript:void(0)" onclick="logout()" class="item">
+				<img src="./images/Logout.png" style="width: 25px;height: 27px;" />
+			</a>
+				<a style="width:100%;text-align: center;height: 100%;padding-bottom: 0px;padding-top:0px">
+					<div class="ui icon input" style="width: 100%;height: 100%">
+						<input type="file" id="drop_zone" class="FileUpload" style="height: 100%;" webkitdirectory/>
+						<div class="dropZoneOverlay">
+							<center><img src="./images/upload.png" width="80" /></center>
+							<center><span id="progressText">Upload files to cloud here</span></center>
+						</div>
+					</div>
+				</a>
+				<div class="right menu">
+					<a class="item">
+					<img src="./images/Banners/logo.png" />
+				</a>
+				</div>
+			</div>
+		</div>
+		<div id="line">
+		</div>
+		<!-- Navbar Ends -->
+		<!-- Login Form -->
+		<br/>
+		<div id="loader">
+	    </div>
+	    <div id="overlay">
+	    </div>
+		<div class="ui container content">
+			<div class="ui row">
+				<div class="sixteen wide column">
+					<table id="myTable" style="width:100%;display: none;" class="ui styled accordion table">
+						<thead>
+							<tr>
+								<th> Status</th>
+								<th> Study Date</th>
+								<th> Patient Name</th>
+								<th> Sex</th>
+								<th> Age</th>
+								<th> Patient ID</th>
+								<th> Study Description</th>
+								<th> Uploaded on</th>
+								<th> View</th>
+							</tr>
+						</thead>
+						<tbody id="tbody">
+						</tbody>
+					</table>
+					<br/>
+					<center>
+						<h3 style="color: #428bca;display: none;" id="message">No studies found.</h3>
+					</center>
+				</div>
+			</div>
+		</div>
+		<div class="ui basic modal" id="filePathDialog">
+			<div class="ui icon header">
+				<i class="archive icon"></i>
+			</div>
+			<div class="content">
+				<h3 id="filePathMessage"></h3>
+			</div>
+			<div class="actions">
+				<div class="ui red basic cancel inverted button">
+					<i class="remove icon"></i> No
+				</div>
+				<div class="ui green ok inverted button">
+					<i class="checkmark icon"></i> Yes
+				</div>
+			</div>
+		</div>
+		<div class="push">
+		</div>
+	</div>
+	<div class="ui container footer" style="text-align: center;font-size:0.85em">
+		&copy; Predible Liver v1.0 Beta
+	</div>
+	<!--script type="text/javascript" src="./js/config.js"></script-->
+	<script type="text/javascript" src="./js/dropzone.js"></script>
+	<script type="text/javascript" src="./js/tasks.js"></script>
+	<script type="text/javascript">
+		$("ui.teal.progress").progress();
+		function logout() {
+			localStorage.setItem("token", "");
+			window.location.href = "index.html";
+		}
 
-    function logout() {
-        localStorage.setItem("token", '');
-        localStorage.setItem("user", '');
-        log.info({ trace: new Error().stack },'User logged out.');
-        window.location.href = "index.html";
-    }
-    </script>
-    <script>
-    if (window.module) module = window.module;
-    </script>
+		var shell = require("electron").shell;
+		//open links externally by default
+		$(document).on("click", "a[href^='http']", function(event) {
+			event.preventDefault();
+			shell.openExternal(this.href);
+		});
+
+	</script>
+	<script>
+	if (window.module) module = window.module;
+	</script>
 </body>
 
 </html>

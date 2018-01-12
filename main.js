@@ -139,7 +139,7 @@ function createLogger() {
 	};
 
 	var log = bunyan.createLogger({
-		name: "pacs-explorer",
+		name: "PredEx",
 		trace: [],
 		streams: [{
 			type: "raw",

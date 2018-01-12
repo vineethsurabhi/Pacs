@@ -2,105 +2,111 @@
 <html>
 
 <head>
-    <title>Predible-PACS Explorer</title>
-    <script>
-    if (typeof module === 'object') {
-        window.module = module;
-        module = undefined;
-    }
-    </script>
-    <link rel="icon" type="image/x-icon" href="images/logo512.png">
-    <meta charset="UTF-8" name="referrer" content="no-referrer">
-    <link rel="stylesheet" type="text/css" href="css/semantic/dist/semantic.css">
-    <script type="text/javascript" src="js/jquery(3).min.js"></script>
-    <script src="js/jquery(3.1).min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="./result.json"></script>
-    <script type="text/javascript" src="css/semantic/dist/semantic.js"></script>
-    <link rel="stylesheet" type="text/css" href="./css/custom.css">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
-    <style type="text/css">
-    body {
-        color: rgb(166, 166, 166);
-        background: url('./images/Banners/Asset 55.png') no-repeat center center fixed;
-        ;
-        /* background-repeat: no-repeat; */
-        /* background-size: 100% 100%; */
-        -webkit-background-size: cover;
-        -moz-background-size: cover;
-        -o-background-size: cover;
-        background-size: cover;
-        background-color: rgb(55, 55, 54);
-        font-family: 'Roboto', sans-serif;
-    }
+	<title>PredEx</title>
+	<script> if (typeof module === "object") { window.module = module; module = undefined;} </script>
+	<link rel="icon" type="image/x-icon" href="images/logo512.png">
+	<meta charset="UTF-8" name="referrer" content="no-referrer">
+	<link rel="stylesheet" type="text/css" href="css/semantic/dist/semantic.css">
+	<script type="text/javascript" src="js/jquery(3).min.js"></script>
+	<script src="js/jquery(3.1).min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="./result.json"></script>
+	<script type="text/javascript" src="css/semantic/dist/semantic.js"></script>
+	<link rel="stylesheet" type="text/css" href="./css/custom.css">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
+	<style type="text/css">
+	body {
+		color: rgb(166, 166, 166);
+		background: url('./images/Banners/Asset 55.png') no-repeat center center fixed;
+		;
+		/* background-repeat: no-repeat; */
+		/* background-size: 100% 100%; */
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: cover;
+		background-size: cover;
+		background-color: rgb(55, 55, 54);
+		font-family: 'Roboto', sans-serif;
+	}
 
-    h3 {
-        font-family: 'Roboto', sans-serif;
-    }
+	h3 {
+		font-family: 'Roboto', sans-serif;
+	}
 
-    .ui.button,
-    .ui.container {
-        font-family: 'Roboto', sans-serif;
-    }
-    </style>
+	.ui.button,
+	.ui.container {
+		font-family: 'Roboto', sans-serif;
+	}
+	</style>
 </head>
 
 <body>
-    <!-- Navbar Starts -->
-    <div class="ui secondary menu">
-        <div class="ui container">
-            <a href="javascript:void(0)" onclick="logout()" style="position: relative;left: 0px;" class="item">
-            <img src="./images/Logout.png" style="width: 19px;height: 21px;" />
+	<!-- Navbar Starts -->
+	<div class="ui secondary menu">
+		<div class="ui container">
+			<a href="javascript:void(0)" onclick="logout()" style="position: relative;left: 0px;" class="item">
+				<img src="./images/Logout.png" style="width: 19px;height: 21px;" />
+			</a>
+			<a style="width:100%;text-align: center;height: 100%;padding-bottom: 0px;padding-top:0px;visibility: hidden">
+                <div class="ui icon input" style="width: 100%;height: 100%">
+                    <input type="file" id="drop_zone" class="FileUpload" style="height: 100%;" webkitdirectory/>
+                    <div class="dropZoneOverlay">
+                        <center><img src="./images/upload.png" width="80" /></center>
+                        <span id="progressText">Upload files to cloud here</span>
+                    </div>
+                </div>
             </a>
-            <div class="right menu">
-                <a class="item">
-                    <img src="./images/Banners/logo.png" style="width: 120px;" />
-                </a>
-            </div>
-        </div>
-    </div>
-    <!-- Navbar Ends -->
-    <!-- Login Form -->
-    <br/>
-    <br/>
-    <div id="pageloader" style="display: none;width: 100%;height: 100%;position: fixed;" class="ui active dimmer">
-        <div class="ui loader"></div>
-    </div>
-    <div class="ui container">
-        <div class="ui grid">
-            <div class="one wide column">
-            </div>
-            <div class="fourteen wide column">
-                <img style="width:120px;" src="./images/Banners/Asset 59.png" />
-                <h2>The Series have been successfully uploaded!</h2>
-                <h4>You’ll be notified by e-mail once the series have been processed. <img style="width:16px;" src="./images/Study_processed.png" /></h4>
-                <a style="padding-left:50px;padding-right:50px;" class="ui button teal" href="https://liver.prediblehealth.com/cases">Go to Predible Cloud</a>
-                <a style="padding-left:50px;padding-right:50px;" class="ui button teal" href="config.html">Upload More Files</a>
-            </div>
-            <div class="one column">
-            </div>
-        </div>
-    </div>
-    <div class="ui container" style="color:white;position: absolute;right: 0;bottom: 0;left: 0;padding: 1rem;text-align: center;font-size:0.85em;">
-        &copy; Predible Liver v1.0 Beta
-    </div>
-    <script type="text/javascript">
-    function logout() {
-        localStorage.setItem("token", "");
-        localStorage.setItem("user", "");
-        var log = require("electron").remote.getGlobal("logObject");
-        log.info({ trace: new Error().stack },"User logged out");
-        window.location.href = "index.html";
-    }
-    var shell = require("electron").shell;
-    //open links externally by default
-    $(document).on("click", "a[href^='http']", function(event) {
-        event.preventDefault();
-        shell.openExternal(this.href);
-    });
-    </script>
-    <script>
-    if (window.module) module = window.module;
-    </script>
+			<div class="right menu">
+				<a class="item">
+					<img src="./images/Banners/logo.png" style="width: 120px;" />
+				</a>
+			</div>
+		</div>
+	</div>
+	<!-- Navbar Ends -->
+	<!-- Login Form -->
+	<br/>
+	<br/>
+	<div id="pageloader" style="display: none;width: 100%;height: 100%;position: fixed;" class="ui active dimmer">
+		<div class="ui loader"></div>
+	</div>
+	<div class="ui container">
+		<div class="ui grid">
+			<div class="one wide column">
+			</div>
+			<div class="fourteen wide column">
+				<img style="width:120px;" src="./images/Banners/Asset 59.png" />
+				<h2>The Series have been successfully uploaded!</h2>
+				<h4>You’ll be notified by e-mail once the series have been processed. <img style="width:16px;" src="./images/Study_processed.png" /></h4>
+				<a style="padding-left:50px;padding-right:50px;" class="ui button teal" href="https://liver.prediblehealth.com/cases">Go to Predible Cloud</a>
+				<a style="padding-left:50px;padding-right:50px;" class="ui button teal" href="config.html">Upload More Files</a>
+			</div>
+			<div class="one column">
+			</div>
+		</div>
+	</div>
+	<div class="ui container" style="color:white;position: absolute;right: 0;bottom: 0;left: 0;padding: 1rem;text-align: center;font-size:0.85em;">
+		&copy; Predible Liver v1.0 Beta
+	</div>
+	<script type="text/javascript">
+	function logout() {
+		localStorage.setItem("token", "");
+		localStorage.setItem("user", "");
+		var log = require("electron").remote.getGlobal("logObject");
+		log.info({ trace: new Error().stack },"User logged out");
+		window.location.href = "index.html";
+	}
+
+	var shell = require("electron").shell;
+	//open links externally by default
+	$(document).on("click", "a[href^='http']", function(event) {
+		event.preventDefault();
+		shell.openExternal(this.href);
+		
+	});
+	</script>
+	<script>
+	if (window.module) module = window.module;
+	</script>
 </body>
 
 </html>
