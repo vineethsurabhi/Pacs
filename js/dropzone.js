@@ -137,7 +137,12 @@ document.getElementById("drop_zone").onchange = document.getElementById("drop_zo
 		win.flashFrame(true);
 		// $("#pageloader").hide();
 		log.info({ trace: new Error().stack }, "Redirected to success page");
-		window.location.href = "./success.html";
+		window.alert("Study uploaded successfully");
+		$("#progressText").html("Upload files to cloud here");
+		document.getElementById("drop_zone").value = "";
+		$("#navbar").css("border-bottom","3px solid rgb(19, 195, 188)");
+		$("#line").html("");
+		// window.location.href = "./success.html";
 	}
 
 	return;

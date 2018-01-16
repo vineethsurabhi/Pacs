@@ -1,6 +1,7 @@
 require("electron-cookies");
+var session = require("electron").remote.getGlobal("session");
 $(document).ready(function() {
-
+	
 	// Show the loading modal and the circular overlay
 	function showLoad() {
 		document.getElementById("loader").style.display = "block";
@@ -66,7 +67,7 @@ $(document).ready(function() {
 
 		var check_viewer = function(data) {
 			if ((data.status == 3) || (data.status == 4)) {
-				return (`<a href="${configuration.urls.API}/task/${data.task_id}"><img style="opacity0.85;margin-top: 5px;width: 30px;height: 15px;" src="./images/Asset 2.png" /></a>`);
+				return (`<a href="javascript:void(0)" onclick="goToViewer(${data.task_id})"><img style="opacity0.85;margin-top: 5px;width: 30px;height: 15px;" src="./images/Asset 2.png" /></a>`);
 			} else {
 				return ("<img style='margin-top: 5px;width: 30px;height: 19px;' src='./images/Asset 3.png' />");
 			}
@@ -171,3 +172,26 @@ $(document).ready(function() {
 			onOpen: function() {}
 		});
 });
+
+function goToViewer(task_id) {
+	
+	var form = document.createElement("form");
+
+	form.setAttribute("method", "POST");
+	form.setAttribute("action", `${configuration.urls.API}/predex_user_login`);
+
+	var task = document.createElement("input");
+	task.setAttribute("type", "hidden");
+	task.setAttribute("name", "task_id");
+	task.setAttribute("value", task_id);
+	form.appendChild(task);
+
+	var token = document.createElement("input");
+	token.setAttribute("type", "hidden");
+	token.setAttribute("name", "user_token");
+	token.setAttribute("value", localStorage.getItem("token"));
+	form.appendChild(token);
+
+	document.body.appendChild(form);
+	form.submit();
+}

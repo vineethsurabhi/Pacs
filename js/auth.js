@@ -1,14 +1,7 @@
 const settings = require("./config.json");
 
 $(document).ready(function () {
-	var shell = require("electron").shell;
 	var log = require("electron").remote.getGlobal("logObject");
-
-	//open links externally by default
-	$(document).on("click", "a[href^=\"http\"]", function (event) {
-		event.preventDefault();
-		shell.openExternal(this.href);
-	});
 
 	// Login
 	var token = localStorage.getItem("token");
