@@ -9,6 +9,9 @@ const url = require("url");
 
 const settings = require("./config.json");
 
+const {session} = require("electron");
+
+
 //const request = require("request");
 var bunyan = require("bunyan");
 var logBuffer = [];
