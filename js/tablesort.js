@@ -34,7 +34,7 @@
 			var unsortedValues = cells.map(function(idx, cell) {
 				if (sortBy)
 					return (typeof sortBy === "function") ? sortBy($(th), $(cell), self) : sortBy;
-				return ($(this).data().sortValue != null ? $(this).data().sortValue : $(this).text());
+				return ($(this).data().sortValue !== null ? $(this).data().sortValue : $(this).text());
 			});
 			if (unsortedValues.length === 0) return;
 
@@ -48,7 +48,7 @@
 			else
 				this.direction = direction;
 
-			direction = this.direction == "asc" ? 1 : -1;
+			direction = this.direction === "asc" ? 1 : -1;
 
 			self.$table.trigger("tablesort:start", [self]);
 			self.log("Sorting by " + this.index + " " + this.direction);
@@ -111,9 +111,8 @@
 				return 1;
 			} else if (a < b) {
 				return -1;
-			} else {
-				return 0;
 			}
+			return 0;
 		}
 	};
 

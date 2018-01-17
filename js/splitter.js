@@ -30,9 +30,8 @@ class Splitter extends stream.Writable {
 			});
 			this.fileStream = fs.createWriteStream(this.filepath + ".part" + this.counter);
 			return;
-		} else {
-			callback(null);
 		}
+		callback(null);
 	}
 }
 

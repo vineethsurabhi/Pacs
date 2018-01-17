@@ -18,11 +18,11 @@ $(document).ready(function () {
 
 	$(document).on("keypress", "input[name=peerPort]", function (e) {
 		var key = e.which;
-		if (key == 13) // the enter key code
+		if (key === 13) // the enter key code
 		{
 			$("#submit").click();
-			return false;
 		}
+		return false;
 	});
 
 	// Set up SCU
@@ -58,7 +58,7 @@ $(document).ready(function () {
 		$.ajax(settings).done(function (response) {
 			var message;
 			console.log(response);
-			if (response.C_Echo == true) {
+			if (response.C_Echo === true) {
 				message = "<div class='ui icon message'>\
                                        <i class='notched circle loading icon'></i>\
                                        <div class='content'>\

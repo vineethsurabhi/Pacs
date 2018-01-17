@@ -23,6 +23,64 @@
             "error",
             "always"
         ],
-        "no-console": "off"
+		"no-console": [
+			"off"
+		],
+		"for-direction": [
+			"error"
+		],
+		"no-await-in-loop": [
+			"error"
+		],
+		"no-return-await": [
+			"error"
+		],
+		"no-loop-func": [
+			"warn"
+		],
+		"no-invalid-this": [
+			"warn"
+		],
+		"no-floating-decimal": [
+			"error"
+		],
+		"no-else-return": [
+			"warn"
+		],
+		"guard-for-in": [
+			"error"
+		],
+		"eqeqeq": [
+			"error",
+			"always"
+		],
+		"consistent-return": [
+			"warn"
+		],
+		"array-callback-return": [
+			"error"
+		],
+		"no-unexpected-multiline": [
+			"error"
+		],
+		"no-template-curly-in-string":[
+			"warn"
+		],
+		"no-irregular-whitespace": [
+			"error"
+		],
+		"yoda": [
+			"error",
+			"never"
+		],
+		"vars-on-top": [
+			"off" // TODO
+		],
+		"no-return-assign": [
+			"error"
+		],
+		"no-redeclare": [
+			"error"
+		]
     }
 }
