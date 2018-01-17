@@ -95,7 +95,7 @@ $(document).ready(function () {
 
 	$(document).on("keypress", "input[name=KeyValue]", function (e) {
 		var key = e.which;
-		if (key == 13) // the enter key code
+		if (key === 13) // the enter key code
 		{
 			$("#formSubmit").click();
 			return false;
@@ -104,7 +104,7 @@ $(document).ready(function () {
 
 	$(document).on("keypress", "input[name=StudyID]", function (e) {
 		var key = e.which;
-		if (key == 13) // the enter key code
+		if (key === 13) // the enter key code
 		{
 			$("#formSubmit").click();
 			return false;
@@ -113,7 +113,7 @@ $(document).ready(function () {
 
 	$(document).on("keypress", "input[name=PatientID]", function (e) {
 		var key = e.which;
-		if (key == 13) // the enter key code
+		if (key === 13) // the enter key code
 		{
 			$("#formSubmit").click();
 			return false;
@@ -123,7 +123,7 @@ $(document).ready(function () {
 	$(document).on("keypress", ".ui.calendar", function (e) {
 		e.preventDefault();
 		var key = e.which;
-		if (key == 13) // the enter key code
+		if (key === 13) // the enter key code
 		{
 			$("#formSubmit").click();
 			return false;
@@ -147,7 +147,7 @@ $(document).ready(function () {
 		StudyID = $("input[name=StudyID]").val();
 		PatientID = $("input[name=PatientID]").val();
 
-		if (advancedSearch == true) {
+		if (advancedSearch) {
 			keySelect = ($(".keySelect").dropdown("get value"));
 			// console.log("keySelect")
 			// console.log(keySelect)
@@ -178,7 +178,7 @@ $(document).ready(function () {
 					var key = Object.keys(item)[0];
 					result[key] = item[key];
 					return result;
-				},{});
+				}, {});
 			} else {
 				keyText[0] = "*" + keyText[0] + "*";
 				data = { keySelect: keyText[0] + "*" };
@@ -196,7 +196,7 @@ $(document).ready(function () {
 
 		var day, month, year;
 
-		if (fromDate != undefined) {
+		if (fromDate !== undefined) {
 
 			day = fromDate.getDate().toString();
 			month = (fromDate.getMonth() + 1).toString();
@@ -218,7 +218,7 @@ $(document).ready(function () {
 
 		var toDate = $("#toDate").calendar("get date");
 
-		if (toDate != undefined) {
+		if (toDate !== undefined) {
 
 			day = toDate.getDate().toString();
 			month = (toDate.getMonth() + 1).toString();
@@ -236,11 +236,11 @@ $(document).ready(function () {
 
 			finaldata["StudyDate"] = fromDate + "-" + toDate;
 		}
-		if (StudyID != "") {
+		if (StudyID !== "") {
 			finaldata.StudyID = "*" + StudyID + "*";
-		} else if (PatientID != "") {
+		} else if (PatientID !== "") {
 			finaldata.PatientID = "*" + PatientID + "*";
-		} else if (fromDate == toDate == undefined && finaldata.StudyID == finaldata.PatientID == "") {
+		} else if ((fromDate || toDate) && (finaldata.StudyID || finaldata.PatientID)) {
 			finaldata = {};
 		}
 
@@ -267,9 +267,10 @@ $(document).ready(function () {
 		};
 
 		// console.log(settings.data)
+
 		$.ajax(settings).done(function (response) {
 			console.log(response);
-			if (response.results.length == 0) {
+			if (response.results.length === 0) {
 				$("#formSubmit").removeClass("loading");
 				$("#tablelist").hide();
 				$("tbody").remove();
@@ -282,7 +283,7 @@ $(document).ready(function () {
 			var datalist;
 			datalist = response.results.map(function (data) {
 
-				if (data.StudyInstanceUID != undefined && !sid.includes(data.StudyInstanceUID)) {
+				if (data.StudyInstanceUID !== undefined && !sid.includes(data.StudyInstanceUID)) {
 					// console.log("StudyInstanceUID")
 					// console.log(data.StudyInstanceUID)
 					sid.push(data.StudyInstanceUID);
@@ -296,26 +297,23 @@ $(document).ready(function () {
 			datalist = datalist.filter(Boolean);
 
 			datalist = datalist.reduce(function (result, item) {
-				if (item != null) {
+				if (item !== null) {
 					var key = Object.keys(item)[0];
 					result[key] = item[key];
 					return result;
-				} else {
-					// console.log("")
 				}
-
 			}, {});
 
 			var accordionContent = function (StudyInstanceUID) {
 
 				// var dropDownData = response.results.map(function(data) {
-				//	 if (data.StudyInstanceUID == StudyInstanceUID) {
+				//	 if (data.StudyInstanceUID === StudyInstanceUID) {
 				//		 return ("<option value=" + data.SeriesInstanceUID + ">" + data.SeriesDescription + "</option>")
 				//	 }
 				// })
 
 				var dropDownData = response.results.map(function (data) {
-					var radio_tag = (series)=>
+					var radio_tag = (series) =>
 						`<input type='radio' 
 							data-study-description=${JSON.stringify(data.SeriesDescription)}
 							data-patient-id=${JSON.stringify(data.PatientID)}
@@ -326,7 +324,7 @@ $(document).ready(function () {
 							name='${series}'
 							value=${data.SeriesInstanceUID}>`;
 
-					if (data.StudyInstanceUID == StudyInstanceUID) {
+					if (data.StudyInstanceUID === StudyInstanceUID) {
 						return ("<div class='ui grid'>\
 										<div class='ui row'>\
 											<div class='one wide column'>\
@@ -399,7 +397,7 @@ $(document).ready(function () {
 			$("tbody").remove();
 			sid.map(function (data1) {
 
-				if (datalist[data1] != undefined) {
+				if (datalist[data1] !== undefined) {
 
 					var tableData = "<tbody class='ui title'>\
 											<tr>\
@@ -429,7 +427,7 @@ $(document).ready(function () {
 
 			var x = document.getElementsByTagName("tr");
 			for (var i = 0; i < x.length; i++) {
-				if (i % 4 == 1) {
+				if (i % 4 === 1) {
 					console.log(x[i].rowIndex);
 					x[i].style.backgroundColor = "#E0E0E0";
 				}
@@ -478,7 +476,7 @@ $(document).ready(function () {
 			study_json["StudyDescription"] = $(this).attr("data-study-description");
 		});
 
-		if (syncData.ARTERIAL == "" || syncData.PORTAL == "" || syncData.VENOUS == "") {
+		if (syncData.ARTERIAL === "" || syncData.PORTAL === "" || syncData.VENOUS === "") {
 			alert("Select Arterial,Venous and Portal series");
 		} else {
 			$("#pageloader").show("fast", "swing", function () {
@@ -675,7 +673,7 @@ $(document).ready(function () {
 				console.log(response);
 				$("#pageloader").hide();
 
-				if (response.C_Echo != true) {
+				if (response.C_Echo !== true) {
 					alert("Server responded with C_ECHO FALSE");
 				}
 			}).fail(function (response) {

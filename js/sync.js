@@ -52,7 +52,7 @@ function init(options) {
 		console.log("Trying to resume");
 		manifest = require(filename + ".manifest.json");
 
-		if (manifest.tries_left == 0) {
+		if (manifest.tries_left === 0) {
 			log.info({ trace: new Error().stack }, "Removed manifest file");
 			fs.unlinkSync(filename + ".manifest.json");
 			manifest = {
@@ -231,7 +231,10 @@ function init(options) {
 				if (abort) {
 					return;
 				}
-				if (counter == options.progressObject.parts) return send_manifest(5);
+				if (counter === options.progressObject.parts) {
+					send_manifest(5);
+					return;
+				}
 				console.log("sending part ", counter + 1);
 				options.progressObject.part = counter + 1;
 				req = send_request(`${api}/upload_part`, token, filename + ".part" + counter, next);

@@ -125,16 +125,16 @@ function createLogger() {
 				request(options, function(error, response, body) {
 					if (error) throw new Error(error);
 					console.log("Response");
-					if( response.statusCode == 200 ) {
+					if( response.statusCode === 200 ) {
 						console.log("clearing buffer");
 						logBuffer = [];
 					}
 					console.log(body);
 				});
 				return;
-			} else {
-				console.log("Log is empty");
 			}
+			
+			console.log("Log is empty");
 		}).catch((err) => {
 			console.log("Error");
 			console.log(err);

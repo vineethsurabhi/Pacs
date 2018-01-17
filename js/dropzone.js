@@ -24,7 +24,7 @@ log.info({ trace: new Error().stack }, "Redirected to dropzone");
 document.getElementById("drop_zone").onchange = document.getElementById("drop_zone").ondrop = function(ev) {
 	log.info({ trace: new Error().stack }, "Study dropped to dropzone");
 	var fullpath;
-	if (ev.target.files[0] == undefined) {
+	if (typeof ev.target.files[0] === "undefined") {
 		fullpath = ev.dataTransfer.files[0].path;
 	} else if (ev.target.files[0].path) {
 		fullpath = ev.target.files[0].path;
@@ -129,7 +129,10 @@ document.getElementById("drop_zone").onchange = document.getElementById("drop_zo
 	}
 
 	function upload_complete(err) {
-		if (err) return show_error();
+		if (err) {
+			show_error();
+			return;
+		}
 		//alert("File upload completed");
 		log.info({ trace: new Error().stack }, "Study uploaded successfully");
 		var win = require("electron").remote.getCurrentWindow();
@@ -319,7 +322,7 @@ $(document).on("click", "#sendSelection", function() {
 
 	console.log(Object.keys(finalData));
 	//$("#pageloader").show();
-	if (finalData.ARTERIAL == "" || finalData.PORTAL == "" || finalData.VENOUS == "") {
+	if (finalData.ARTERIAL === "" || finalData.PORTAL === "" || finalData.VENOUS === "") {
 		alert("Select Arterial,Venous and Portal series");
 	} else {
 		$("#pageloader").show("fast", "swing", function() {
@@ -350,7 +353,7 @@ function deleteSelection(){
 
 function send() {
 	var series_length;
-	Object.keys(finalData).map(function(data) {
+	Object.keys(finalData).forEach(function(data) {
 		if (finalData[data] !== "") {
 			var settings = {
 				"async": false,
@@ -479,7 +482,7 @@ var last_focus;
 
 $("#list-items").on("focus","div.keySelect", function(event){
 	event.preventDefault();
-	if($(this).dropdown("get text") != "Select Series" || $(this).dropdown("get text") != "") {
+	if($(this).dropdown("get text") !== "Select Series" || $(this).dropdown("get text") !== "") {
 		last_focus = $(this).dropdown("get text");
 	}
 });
@@ -491,41 +494,41 @@ $("#list-items").on("change", "div.keySelect", function(event) {
 
 	var val = (select[0].options[select[0].options.selectedIndex].getAttribute("data-seriesid"));
 
-	if($(this).dropdown("get text") != "Select Series") {
+	if($(this).dropdown("get text") !== "Select Series") {
 
 		if (!series.includes($(this).dropdown("get text"))) {
 			series.push($(this).dropdown("get text"));
-			if ($(this).dropdown("get text") == "ARTERIAL") {
+			if ($(this).dropdown("get text") === "ARTERIAL") {
 				finalData.ARTERIAL = val;
 				study_info.ARTERIAL = select.attr("data-series");
 				getContext[$(this).dropdown("get text")] = $(this);
-			} else if ($(this).dropdown("get text") == "PORTAL") {
+			} else if ($(this).dropdown("get text") === "PORTAL") {
 				finalData.PORTAL = val;
 				study_info.PORTAL = select.attr("data-series");
 				getContext[$(this).dropdown("get text")] = $(this);
-			} else if ($(this).dropdown("get text") == "VENOUS") {
+			} else if ($(this).dropdown("get text") === "VENOUS") {
 				finalData.VENOUS = val;
 				study_info.VENOUS = select.attr("data-series");
 				getContext[$(this).dropdown("get text")] = $(this);
 			}
 		} else {
 
-			if( $(this).dropdown("get text") != "Select Series" && getContext[$(this).dropdown("get text")] !="" ) {
+			if( $(this).dropdown("get text") !== "Select Series" && getContext[$(this).dropdown("get text")] !=="" ) {
 				getContext[$(this).dropdown("get text")].dropdown("restore defaults");
 				getContext[last_focus]="";
 				finalData[last_focus] = "";
 				study_info[last_focus] = "";
 			}
 
-			if ($(this).dropdown("get text") == "ARTERIAL") {
+			if ($(this).dropdown("get text") === "ARTERIAL") {
 				finalData.ARTERIAL = val;
 				study_info.ARTERIAL = select.attr("data-series");
 				getContext[$(this).dropdown("get text")] = $(this);
-			} else if ($(this).dropdown("get text") == "PORTAL") {
+			} else if ($(this).dropdown("get text") === "PORTAL") {
 				finalData.PORTAL = val;
 				study_info.PORTAL = select.attr("data-series");
 				getContext[$(this).dropdown("get text")] = $(this);
-			} else if ($(this).dropdown("get text")== "VENOUS") {
+			} else if ($(this).dropdown("get text") === "VENOUS") {
 				finalData.VENOUS = val;
 				study_info.VENOUS = select.attr("data-series");
 				getContext[$(this).dropdown("get text")] = $(this);

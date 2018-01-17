@@ -22,7 +22,7 @@ $(document).ready(function () {
 		//token = response;
 		$("#splashScreen").hide();
 		localStorage.setItem("token", response);
-		if (response != null) {
+		if (response !== null) {
 			log.info({ trace: new Error().stack }, "Token validation successfull, User logged in");
 			$("#splashScreen").show();
 			// document.cookie = "user_token=" + response;
@@ -66,7 +66,7 @@ $(document).ready(function () {
 			btn.removeClass("loading");
 			localStorage.setItem("token", response);
 			localStorage.setItem("user", $("input[name=email]").val());
-			if (response != null) {
+			if (response !== null) {
 				log.info({ trace: new Error().stack }, "Login successfull");
 				// document.cookie = "user_token=" + response;
 				window.location.href = "./config.html";
@@ -111,7 +111,7 @@ $(document).ready(function () {
 		$.ajax(settings).done(function (response) {
 			var message;
 			console.log(response);
-			if (response.status == "success") {
+			if (response.status === "success") {
 				message = "<div class=\"ui icon message\">\
                                        <i class=\"notched circle loading icon\"></i>\
                                        <div class=\"content\">\
