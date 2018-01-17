@@ -48,11 +48,7 @@ $(document).ready(function() {
 							</div>`);
 				});
 			}
-			if (ui_content != undefined) {
-				return ui_content;
-			} else {
-				return [""];
-			}
+			return ui_content || [];
 		};
 
 		var check_status = function(data) {
@@ -75,15 +71,6 @@ $(document).ready(function() {
 
 		// href='"+configuration.urls.API+"'/task/'" + data.task_id + "'
 
-		var format_date = function(data) {
-			if (data != undefined) {
-				data = data.toString();
-				return addZero(data.substr(6, 2)) + "/" + addZero(data.substr(4, 2)) + "/" + data.substr(0, 4);
-			} else {
-				return "-";
-			}
-		};
-
 		var check_report = function(data) {
 			if (data.status == 4) {
 				return (`<a href="/report/${data.task_id}">View Report</a>`);
@@ -92,34 +79,6 @@ $(document).ready(function() {
 			}
 		};
 
-		function addZero(i) {
-			i = parseInt(i);
-			if (i < 10) {
-				i = "0" + i;
-			}
-			return i;
-		}
-
-		var convert_date = function(data) {
-			// var new_date = moment.utc(data).local().format('YYYY-MM-DD HH:mm:ss');
-			// console.log(new Date(data + new Date().getTimezoneOffset()))
-			var new_date = new Date(data.getTime() + data.getTimezoneOffset() * 60 * 1000);
-			var offset = data.getTimezoneOffset() / 60;
-			var hours = data.getHours();
-			new_date.setHours(hours - offset);
-			var suffix = new_date.getHours() >= 12 ? "PM" : "AM";
-			hours = ((new_date.getHours() + 11) % 12 + 1);
-
-			return (addZero(new_date.getDate()) + "/" + addZero(new_date.getMonth()) + "/" + new_date.getFullYear() + " " + addZero(hours) + ":" + addZero(new_date.getMinutes()) + ":" + addZero(new_date.getSeconds()) + " " + suffix);
-		};
-
-		function checkUndefined(data) {
-			if (data != undefined) {
-				return data;
-			} else {
-				return "-";
-			}
-		}
 		if (studies.length > 0) {
 			$("#message").hide();
 			$("#myTable").show();
@@ -134,13 +93,13 @@ $(document).ready(function() {
 
 				var study_accordion = $(`<tr class="ui title" style="background-color:${color}">\
                                             <td> ${check_status(data.status)} </td>\
-                                            <td> ${format_date(JSON.parse(data.study_json).StudyDate)}</td>\
-                                            <td> ${checkUndefined(JSON.parse(data.study_json).PatientName)}</td>\
-                                            <td> ${checkUndefined(JSON.parse(data.study_json).PatientSex)}</td>\
-                                            <td> ${checkUndefined(JSON.parse(data.study_json).PatientAge)}</td>\
-                                            <td> ${checkUndefined(JSON.parse(data.study_json).PatientId)}</td>\
-                                            <td> ${checkUndefined(JSON.parse(data.study_json).StudyDescription)}</td>\
-                                            <td> ${convert_date(new Date(data.created))}</td>\
+                                            <td> ${ moment.utc(JSON.parse(data.study_json).StudyDate).local().format("DD/MM/YYYY HH:mm:ss") || "-" }</td>\
+                                            <td> ${ JSON.parse(data.study_json).PatientName || "-"}</td>\
+                                            <td> ${ JSON.parse(data.study_json).PatientSex || "-"}</td>\
+                                            <td> ${ JSON.parse(data.study_json).PatientAge || "-"}</td>\
+                                            <td> ${ JSON.parse(data.study_json).PatientId || "-"}</td>\
+                                            <td> ${ JSON.parse(data.study_json).StudyDescription || "-"}</td>\
+                                            <td> ${ moment.utc(data.created).local().format("DD/MM/YYYY HH:mm:ss") || "-"}</td>\
                                             <td class="default">${check_viewer(data)}</td>\
                                         </tr>\
                                         <tr class="ui content">\
