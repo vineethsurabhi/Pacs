@@ -9,9 +9,6 @@ const url = require("url");
 
 const settings = require("./config.json");
 
-const {session} = require("electron");
-
-
 //const request = require("request");
 var bunyan = require("bunyan");
 var logBuffer = [];
@@ -24,7 +21,7 @@ let mainWindow;
 
 function createWindow() {
 	// Create the browser window.
-	mainWindow = new BrowserWindow({ width: 1200, height: 680 });
+	mainWindow = new BrowserWindow({ width: 1200, height: 680, resize: true});
 	mainWindow.once("focus", () => mainWindow.flashFrame(false));
 	mainWindow.flashFrame(true);
 	createLogger();
@@ -153,9 +150,22 @@ function createLogger() {
 
 	global.logObject = log;
 	global.logBuffer = logBuffer;
+	global.random = {prop1: null};
 	return;
 }
 
+
+// Handles visibility of webapp and local predex
+global.predexViewHandler = function() {
+	mainWindow.webContents.executeJavaScript("\
+		var liverFrame = document.getElementById('liverFrame');\
+		liverFrame.style.zIndex='-1';\
+		liverFrame.src = 'about:blank';\
+		document.getElementsByClassName('content')[0].style.zIndex = '-1';\
+		document.getElementsByClassName('footer')[0].style.zIndex = '-1';\
+		document.body.style.overflowY = 'auto';\
+		");
+};
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

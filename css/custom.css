@@ -9,8 +9,29 @@ body {
     height: 100%;
 }
 
+webview {
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
 #search_icon {
     width: 100%;
+}
+
+
+.content {
+    min-height: 100%;
+    padding-bottom: 20px;
+    margin-bottom: -20px;
+    background-color: white;
+}
+
+.footer,
+.push {
+    height: 20px;
 }
 
 .prompt {
