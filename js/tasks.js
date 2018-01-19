@@ -38,7 +38,6 @@ $(document).ready(function() {
 				ui_content = (object.SeriesDescription).map(function(data) {
 					//	data.join(',')
 					return (`<div class="ui grid" style="margin-top:0px;padding-top:0px;padding-bottom:0px;">\
-								<div class="one wide column"></div>\
 								<div class="six wide column">\
 									<div>${Object.keys(data)[0]}</div>\
 								</div>\
@@ -63,7 +62,7 @@ $(document).ready(function() {
 
 		var check_viewer = function(data) {
 			if ((data.status == 3) || (data.status == 4)) {
-				return (`<a href="javascript:void(0)" onclick="goToViewer(${data.task_id})"><img style="opacity0.85;margin-top: 5px;width: 30px;height: 15px;" src="./images/Asset 2.png" /></a>`);
+				return (`<a href="javascript:void(0)" onclick="goToWebapp({task_id:${data.task_id}, service:'task'})"><img style="opacity0.85;margin-top: 5px;width: 30px;height: 15px;" src="./images/Asset 2.png" /></a>`);
 			} else {
 				return ("<img style='margin-top: 5px;width: 30px;height: 19px;' src='./images/Asset 3.png' />");
 			}
@@ -73,7 +72,7 @@ $(document).ready(function() {
 
 		var check_report = function(data) {
 			if (data.status == 4) {
-				return (`<a href="/report/${data.task_id}">View Report</a>`);
+				return (`<a href="javascript:void(0)" onclick="goToWebapp({task_id:${data.task_id}, service:'report'})">View Report</a>`);
 			} else {
 				return ("");
 			}
@@ -103,9 +102,9 @@ $(document).ready(function() {
                                             <td class="default">${check_viewer(data)}</td>\
                                         </tr>\
                                         <tr class="ui content">\
-                                            <td colspan=7>\
+                                        	<td></td>
+                                            <td colspan=6>\
                                                 <div class="ui grid" style="margin-bottom:5px;">\
-                                                    <div class="one wide column"></div>\
                                                     <div class="six wide column" style="padding-bottom:0px;">\
                                                         <div><b>Series Description</b></div>\
                                                     </div>\
@@ -132,25 +131,22 @@ $(document).ready(function() {
 		});
 });
 
-function goToViewer(task_id) {
+function goToWebapp(args) {
+
+	var content = document.getElementsByClassName("content");
+	content[0].style.zIndex = "-1";
 	
-	var form = document.createElement("form");
+	var liverFrame = document.getElementById("liverFrame");
+	liverFrame.style.zIndex = "1";
+	document.getElementsByClassName("footer")[0].style.zIndex = "-1";
 
-	form.setAttribute("method", "POST");
-	form.setAttribute("action", `${configuration.urls.API}/predex_user_login`);
+	require("electron").remote.getGlobal("random").prop1 = localStorage.getItem("token");
 
-	var task = document.createElement("input");
-	task.setAttribute("type", "hidden");
-	task.setAttribute("name", "task_id");
-	task.setAttribute("value", task_id);
-	form.appendChild(task);
+	liverFrame.addEventListener("console-message", function(e) {
+		console.log(e);
+	});
 
-	var token = document.createElement("input");
-	token.setAttribute("type", "hidden");
-	token.setAttribute("name", "user_token");
-	token.setAttribute("value", localStorage.getItem("token"));
-	form.appendChild(token);
-
-	document.body.appendChild(form);
-	form.submit();
+	liverFrame.src = `${configuration.urls.API}/predex_user_login?task_id=${args["task_id"]}&&service=${args["service"].toString()}`;
+	document.body.style.overflow = "hidden";
+	
 }
