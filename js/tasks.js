@@ -1,5 +1,6 @@
 require("electron-cookies");
-var session = require("electron").remote.getGlobal("session");
+var log = require("electron").remote.getGlobal("logObject");
+
 $(document).ready(function() {
 	
 	// Show the loading modal and the circular overlay
@@ -34,7 +35,7 @@ $(document).ready(function() {
 			var object = JSON.parse(data);
 			var ui_content;
 
-			if (object != null && object.SeriesDescription != undefined) {
+			if (object.SeriesDescription) {
 				ui_content = (object.SeriesDescription).map(function(data) {
 					//	data.join(',')
 					return (`<div class="ui grid" style="margin-top:0px;padding-top:0px;padding-bottom:0px;">\
@@ -51,75 +52,68 @@ $(document).ready(function() {
 		};
 
 		var check_status = function(data) {
-			if ((data == 1) || (data == 2)) {
+			if ((data === 1) || (data === 2)) {
 				return ("<div data-tooltip='Study is under process.' data-position='top left'><img width='26' height='26' src='./images/Study_processing.png'/></div>");
-			} else if (data == 3) {
+			} else if (data === 3) {
 				return ("<div data-tooltip='Study processed.' data-position='top left'><img width='26' height='26' src='./images/Study_processed.png'/><div>");
-			} else if (data == 4) {
-				return ("<div data-tooltip='Study reported.' data-position='top left'><img width='26' height='26' src='./images/Study_reported.png'/><div>");
-			}
+			} 
+			return ("<div data-tooltip='Study reported.' data-position='top left'><img width='26' height='26' src='./images/Study_reported.png'/><div>");
 		};
 
 		var check_viewer = function(data) {
-			if ((data.status == 3) || (data.status == 4)) {
+			if ((data.status === 3) || (data.status === 4)) {
 				return (`<a href="javascript:void(0)" onclick="goToWebapp({task_id:${data.task_id}, service:'task'})"><img style="opacity0.85;margin-top: 5px;width: 30px;height: 15px;" src="./images/Asset 2.png" /></a>`);
-			} else {
-				return ("<img style='margin-top: 5px;width: 30px;height: 19px;' src='./images/Asset 3.png' />");
-			}
+			} 
+			return ("<img style='margin-top: 5px;width: 30px;height: 19px;' src='./images/Asset 3.png' />");
 		};
-
-		// href='"+configuration.urls.API+"'/task/'" + data.task_id + "'
 
 		var check_report = function(data) {
-			if (data.status == 4) {
+			if (data.status === 4) {
 				return (`<a href="javascript:void(0)" onclick="goToWebapp({task_id:${data.task_id}, service:'report'})">View Report</a>`);
-			} else {
-				return ("");
-			}
+			} 
+			return ("");
 		};
 
-		if (studies.length > 0) {
-			$("#message").hide();
-			$("#myTable").show();
+		var setRowColour = function(index) {
+			if (index % 2 === 1) {
+				return "rgb(240,240,240)";
+			} 
+			return "rgb(255,255,255";
+		};
 
-			studies.map(function(data, index) {
-				var color;
-				if (index % 2 == 1) {
-					color = "rgb(240,240,240)";
-				} else {
-					color = "rgb(255,255,255";
-				}
+		$("#myTable").show();
 
-				var study_accordion = $(`<tr class="ui title" style="background-color:${color}">\
-                                            <td> ${check_status(data.status)} </td>\
-                                            <td> ${ moment.utc(JSON.parse(data.study_json).StudyDate).local().format("DD/MM/YYYY HH:mm:ss") || "-" }</td>\
-                                            <td> ${ JSON.parse(data.study_json).PatientName || "-"}</td>\
-                                            <td> ${ JSON.parse(data.study_json).PatientSex || "-"}</td>\
-                                            <td> ${ JSON.parse(data.study_json).PatientAge || "-"}</td>\
-                                            <td> ${ JSON.parse(data.study_json).PatientId || "-"}</td>\
-                                            <td> ${ JSON.parse(data.study_json).StudyDescription || "-"}</td>\
-                                            <td> ${ moment.utc(data.created).local().format("DD/MM/YYYY HH:mm:ss") || "-"}</td>\
-                                            <td class="default">${check_viewer(data)}</td>\
-                                        </tr>\
-                                        <tr class="ui content">\
-                                        	<td></td>
-                                            <td colspan=6>\
-                                                <div class="ui grid" style="margin-bottom:5px;">\
-                                                    <div class="six wide column" style="padding-bottom:0px;">\
-                                                        <div><b>Series Description</b></div>\
-                                                    </div>\
-                                                    <div class="six wide column" style="padding-bottom:0px;">\
-                                                        <div><b>Number of Images</b></div>\
-                                                    </div>\
-                                                </div>\
-                                             ${content_accordion(data.study_json).join("")}</td>\
-                                            <td colspan=2 style="text-align:right;">${check_report(data)}</td>\
-                                        </tr>`);
-				$("#tbody").append(study_accordion);
-			});
-		} else {
-			$("#message").show();
-		}
+		if (studies.length === 0) {
+			studies = Object.values(require("./js/samples.json").studies);
+		} 
+		studies.forEach(function(data, index) {
+			var study_accordion = $(`<tr class="ui title" style="background-color:${setRowColour(index)}">\
+                                           <td> ${check_status(data.status)} </td>\
+                                           <td> ${ moment.utc(JSON.parse(data.study_json).StudyDate).local().format("DD/MM/YYYY HH:mm:ss") || "-" }</td>\
+                                           <td> ${ JSON.parse(data.study_json).PatientName || "-"}</td>\
+                                           <td> ${ JSON.parse(data.study_json).PatientSex || "-"}</td>\
+                                           <td> ${ JSON.parse(data.study_json).PatientAge || "-"}</td>\
+                                           <td> ${ JSON.parse(data.study_json).PatientId || "-"}</td>\
+                                           <td> ${ JSON.parse(data.study_json).StudyDescription || "-"}</td>\
+                                           <td> ${ moment.utc(data.created).local().format("DD/MM/YYYY HH:mm:ss") || "-"}</td>\
+                                           <td class="default">${check_viewer(data)}</td>\
+                                       </tr>\
+                                       <tr class="ui content">\
+                                       	<td></td>
+                                           <td colspan=6>\
+                                               <div class="ui grid" style="margin-bottom:5px;">\
+                                                   <div class="six wide column" style="padding-bottom:0px;">\
+                                                       <div><b>Series Description</b></div>\
+                                                   </div>\
+                                                   <div class="six wide column" style="padding-bottom:0px;">\
+                                                       <div><b>Number of Images</b></div>\
+                                                   </div>\
+                                               </div>\
+                                            ${content_accordion(data.study_json).join("")}</td>\
+                                           <td colspan=2 style="text-align:right;">${check_report(data)}</td>\
+                                       </tr>`);
+			$("#tbody").append(study_accordion);
+		});
 	});
 
 	$(".ui.accordion")
@@ -145,7 +139,7 @@ function goToWebapp(args) {
 	liverFrame.addEventListener("console-message", function(e) {
 		console.log(e);
 	});
-
+	log.info({ trace: new Error().stack }, "Redirecting to webapp from predix");
 	liverFrame.src = `${configuration.urls.API}/predex_user_login?task_id=${args["task_id"]}&&service=${args["service"].toString()}`;
 	document.body.style.overflow = "hidden";
 	

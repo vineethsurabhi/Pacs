@@ -1,0 +1,100 @@
+{
+	"studies": [
+		{
+			"status":3,
+			"StudyDate":"2017-10-05 17:49:09",
+			"PatientName":"George",
+			"PatientSex":"M",
+			"PatientAge":"58",
+			"PatientId":"12580",
+			"StudyDescription":"TPCT ABDOMEN",
+			"created":"Wed May 10 2017 13:52:29 GMT+0530 (IST)",
+			"SeriesDescription": [
+				{"ARTERIAL":"473"},
+				{"PORTAL":"473"},
+				{"VENOUS":"473"}
+			],
+			"study_json":"{\"PatientSex\": \"M\", \"PatientName\": \"George\", \"StudyDate\": \"05/10/2017 17:49:09\", \"SeriesDescription\": [{\"Arterial\": 473}, {\"Portal\": 473}, {\"Venous\": 473}], \"PatientId\": \"12580\", \"StudyDescription\": \"TPCT ABDOMEN\", \"PatientAge\": \"58\"}"
+		},
+		{
+			"status":3,
+			"StudyDate":"05/10/2017 17:41:30",
+			"PatientName":"Jojo",
+			"PatientSex":"M",
+			"PatientAge":"74",
+			"PatientId":"12581",
+			"StudyDescription":"TPCT ABDOMEN",
+			"created":"Wed May 10 2017 13:32:21 GMT+0530 (IST)",
+			"SeriesDescription": [
+				{"ARTERIAL":"841"},
+				{"PORTAL":"841"},
+				{"VENOUS":"841"}
+			],
+			"study_json":"{\"PatientSex\": \"M\", \"PatientName\": \"Jojo\", \"StudyDate\": \"05/10/2017 17:41:30\", \"SeriesDescription\": [{\"Arterial\": 841}, {\"Portal\": 841}, {\"Venous\": 841}], \"PatientId\": \"12581\", \"StudyDescription\": \"TPCT ABDOMEN\", \"PatientAge\": \"74\"}"
+		},
+		{
+			"status":3,
+			"StudyDate":"05/10/2017 14:19:55",
+			"PatientName":"Mary",
+			"PatientSex":"F",
+			"PatientAge":"44",
+			"PatientId":"12582",
+			"StudyDescription":"TPCT ABDOMEN",
+			"created":"Wed May 10 2017 14:42:48 GMT+0530 (IST)",
+			"SeriesDescription": [
+				{"ARTERIAL":"761"},
+				{"PORTAL":"761"},
+				{"VENOUS":"761"}
+			],
+			"study_json":"{\"PatientSex\": \"F\", \"PatientName\": \"Mary\", \"StudyDate\": \"05/10/2017 14:19:55\", \"SeriesDescription\": [{\"Arterial\": 761}, {\"Portal\": 761}, {\"Venous\": 761}], \"PatientId\": \"12582\", \"StudyDescription\": \"TPCT ABDOMEN\", \"PatientAge\": \"44\"}"
+		},
+		{
+			"status":3,
+			"StudyDate":"28/09/2017 11:36:11",
+			"PatientName":"Fiona",
+			"PatientSex":"F",
+			"PatientAge":"34",
+			"PatientId":"12583",
+			"StudyDescription":"TPCT ABDOMEN",
+			"created":"Sun Sep 10 2017 07:58:55 GMT+0530 (IST)",
+			"SeriesDescription": [
+				{"ARTERIAL":"801"},
+				{"PORTAL":"801"},
+				{"VENOUS":"801"}
+			],
+			"study_json":"{\"PatientSex\": \"F\", \"PatientName\": \"Fiona\", \"StudyDate\": \"2017/09/28 11:36:11\", \"SeriesDescription\": [{\"Arterial\": 801}, {\"Portal\": 801}, {\"Venous\": 801}], \"PatientId\": \"12583\", \"StudyDescription\": \"TPCT ABDOMEN\", \"PatientAge\": \"34\"}"
+		},
+		{
+			"status":3,
+			"StudyDate":"28/09/2017 14:09:57",
+			"PatientName":"Michael",
+			"PatientSex":"M",
+			"PatientAge":"38",
+			"PatientId":"12584",
+			"StudyDescription":"TPCT ABDOMEN",
+			"created":"Wed May 10 2017 15:10:58 GMT+0530 (IST)",
+			"SeriesDescription": [
+				{"ARTERIAL":"721"},
+				{"PORTAL":"721"},
+				{"VENOUS":"721"}
+			],
+			"study_json":"{\"PatientSex\": \"M\", \"PatientName\": \"Michael\", \"StudyDate\": \"2017/09/28 14:09:57\", \"SeriesDescription\": [{\"Arterial\": 721}, {\"Portal\": 721}, {\"Venous\": 721}], \"PatientId\": \"12584\", \"StudyDescription\": \"TPCT ABDOMEN\", \"PatientAge\": \"38\"}"
+		},
+		{
+			"status":3,
+			"StudyDate":"28/09/2017 14:07:28",
+			"PatientName":"Donald",
+			"PatientSex":"M",
+			"PatientAge":"54",
+			"PatientId":"12585",
+			"StudyDescription":"TPCT ABDOMEN",
+			"created":"Thu Sep 28 2017 08:37:28 GMT+0530 (IST)",
+			"SeriesDescription": [
+				{"ARTERIAL":"697"},
+				{"PORTAL":"697"},
+				{"VENOUS":"697"}
+			],
+			"study_json":"{\"PatientSex\": \"M\", \"PatientName\": \"Donald\", \"StudyDate\": \"2017/09/28 14:07:28\", \"SeriesDescription\": [{\"Arterial\": 697}, {\"Portal\": 697}, {\"Venous\": 697}], \"PatientId\": \"12585\", \"StudyDescription\": \"TPCT ABDOMEN\", \"PatientAge\": \"54\"}"
+		}
+	]
+}
