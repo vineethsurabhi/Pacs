@@ -34,22 +34,27 @@
   "scripts": {
     "start": "electron .",
     "package": "electron-builder .",
-	"postinstall": "npm run package",
-	"lint": "eslint ."
+    "postinstall": "npm run package",
+    "lint": "eslint .",
+    "rebuild": "electron-rebuild -f -w sqlite3"
   },
   "author": "Predible",
   "license": "UNLICENSED",
   "devDependencies": {
     "electron": "~1.7.9",
-    "electron-builder": "^19.43.0"
+    "electron-builder": "^19.43.0",
+    "electron-rebuild": "^1.7.3"
   },
   "dependencies": {
     "bunyan": "^1.8.12",
+    "dicom-parser": "^1.7.6",
     "electron-cookies": "^1.1.0",
     "get-folder-size": "^1.0.0",
     "moment": "^2.19.1",
+    "node-dir": "^0.1.17",
     "progressbar.js": "^1.0.1",
     "request": "^2.83.0",
+    "sqlite3": "^3.1.13",
     "tar-fs": "^1.16.0"
   }
 }

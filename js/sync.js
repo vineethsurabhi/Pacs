@@ -1,12 +1,27 @@
 const fs = require("fs");
-const tarfs = require("tar-fs");
 const zlib = require("zlib");
-const request = require("request");
 const node_crypto = require("crypto");
 const os = require("os");
 const path = require("path");
+
+const sqlite3 = require("sqlite3").verbose();
+const tarfs = require("tar-fs");
+const request = require("request");
+
 const getFolderSize = require("get-folder-size");
+
 const Splitter = require("./splitter.js");
+const AnonStream = require("./anonymizeStream.js");
+
+function create_database() {
+    let  db = new sqlite3.Database('studyinterface', (err) => {
+        if (err) {
+            console.error(err.message);
+        }
+        console.log('Connected to the studyinterface database.');
+    });
+    return db;
+}
 
 function hash_name(filepath) {
 	var name = path.basename(filepath).toLowerCase();
@@ -38,6 +53,7 @@ function init(options) {
 	};
 	var log = options.logObject;
 	var api = options.url;
+	var db = create_database();
 
 	if (!fs.statSync(filepath).isDirectory()) {
 		log.info({ trace: new Error().stack }, "Study is a valid directory");
@@ -64,6 +80,7 @@ function init(options) {
 		}
 	}
 
+
 	function get_zip_pipe() {
 		zipStart = new Date();
 		var calculating = true;
@@ -72,6 +89,7 @@ function init(options) {
 		getFolderSize(filepath, (err, size) => {
 			if (err) throw err;
 			log.info({ trace: new Error().stack }, "Study size found: " + size);
+
 			console.log("folder size found: ", size);
 
 			calculating = false;
@@ -85,27 +103,28 @@ function init(options) {
 				manifest.files_total_size += size;
 			}
 		});
-
-		var pack = tarfs.pack(filepath, {
-			entries: file ? [file] : undefined,
-			map: function(header) {
-				//console.log(header);
-				if (calculating)
-					options.progressObject.total_size += header.size;
-			},
-			finish: function() {
-				console.log("closed");
-				log.info({ trace: new Error().stack }, "Study zipped");
-				// console.log("closed");
-				clearInterval(cbid);
-			}
-		}).on("data", (chunk) => {
-			options.progressObject.bytes_read += chunk.length;
-			options.progressObject.rate = ((options.progressObject.bytes_read / (1024 * 1024)) / ((new Date() - zipStart) / 1000));
-			options.progressObject.eta = (options.progressObject.total_size - options.progressObject.bytes_read) / (options.progressObject.rate * 1024 * 1024);
-		}).pipe(zlib.createGzip({
-			level: zlib.Z_BEST_COMPRESSION
-		})).pipe(splitter);
+        // let filedir = [path.join(filepath, file)];
+        var pack = new AnonStream({
+            dbhandle: db,
+            filepath: filepath,
+            entries: file ? [file] : undefined,
+            map: function(header) {
+                //console.log(header);
+                if (calculating)
+                    options.progressObject.total_size += header.size;
+            }
+        }).on("data", (chunk) => {
+            options.progressObject.bytes_read += chunk.length;
+            options.progressObject.rate = ((options.progressObject.bytes_read / (1024 * 1024)) / ((new Date() - zipStart) / 1000));
+            options.progressObject.eta = (options.progressObject.total_size - options.progressObject.bytes_read) / (options.progressObject.rate * 1024 * 1024);
+        }).on("end", function() {
+            console.log("closed");
+            log.info({ trace: new Error().stack }, "Study zipped");
+            // console.log("closed");
+            clearInterval(cbid);
+        }).pipe(zlib.createGzip({
+            level: zlib.Z_BEST_COMPRESSION
+        })).pipe(splitter);
 
 		options.cancel_cb(() => {
 			pack.cork();
@@ -121,7 +140,6 @@ function init(options) {
 		var cbid = setInterval(options.upload_cb, 1000, options.progressObject);
 		uploadStart = new Date();
 
-		//var calculating = true;
 		options.progressObject.total_size = manifest.files_total_size;
 
 		var readStream = fs.createReadStream(filename)
@@ -177,9 +195,7 @@ function init(options) {
 			clearInterval(cbid);
 			callback();
 		}
-
 		req = request(settings, request_cb);
-
 		return req;
 	}
 
@@ -226,7 +242,6 @@ function init(options) {
 			console.log(counter, " parts");
 			next();
 
-
 			function next() {
 				if (abort) {
 					return;
@@ -235,6 +250,9 @@ function init(options) {
 					send_manifest(5);
 					return;
 				}
+				console.log("counter values");
+				console.log(counter, options.progressObject.parts);
+
 				console.log("sending part ", counter + 1);
 				options.progressObject.part = counter + 1;
 				req = send_request(`${api}/upload_part`, token, filename + ".part" + counter, next);
@@ -256,6 +274,7 @@ function init(options) {
 						send_manifest(tries_left);
 						return;
 					} else if (err) {
+						console.log("error completing upload");
 						options.abort_cb();
 					}
 					log.info({ trace: new Error().stack }, "Sending manifest file to DL API");
@@ -271,7 +290,8 @@ function init(options) {
 	return {
 		upload: upload,
 		rand_name: rand_name,
-		hash_name: hash_name
+		hash_name: hash_name,
+		create_db: create_database
 	};
 }
 
