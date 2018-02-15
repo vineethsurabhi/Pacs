@@ -1,26 +1,24 @@
 const fs = require("fs");
-const zlib = require("zlib");
-const node_crypto = require("crypto");
 const os = require("os");
 const path = require("path");
+const node_crypto = require("crypto");
+const zlib = require("zlib");
 
-const sqlite3 = require("sqlite3").verbose();
-const tarfs = require("tar-fs");
 const request = require("request");
-
+const sqlite3 = require("sqlite3").verbose();
 const getFolderSize = require("get-folder-size");
 
 const Splitter = require("./splitter.js");
 const AnonStream = require("./anonymizeStream.js");
 
 function create_database() {
-    let  db = new sqlite3.Database('studyinterface', (err) => {
-        if (err) {
-            console.error(err.message);
-        }
-        console.log('Connected to the studyinterface database.');
-    });
-    return db;
+	let  db = new sqlite3.Database("studyinterface", (err) => {
+		if (err) {
+			console.error(err.message);
+		}
+		console.log("Connected to the studyinterface database.");
+	});
+	return db;
 }
 
 function hash_name(filepath) {
@@ -103,28 +101,28 @@ function init(options) {
 				manifest.files_total_size += size;
 			}
 		});
-        // let filedir = [path.join(filepath, file)];
-        var pack = new AnonStream({
-            dbhandle: db,
-            filepath: filepath,
-            entries: file ? [file] : undefined,
-            map: function(header) {
-                //console.log(header);
-                if (calculating)
-                    options.progressObject.total_size += header.size;
-            }
-        }).on("data", (chunk) => {
-            options.progressObject.bytes_read += chunk.length;
-            options.progressObject.rate = ((options.progressObject.bytes_read / (1024 * 1024)) / ((new Date() - zipStart) / 1000));
-            options.progressObject.eta = (options.progressObject.total_size - options.progressObject.bytes_read) / (options.progressObject.rate * 1024 * 1024);
-        }).on("end", function() {
-            console.log("closed");
-            log.info({ trace: new Error().stack }, "Study zipped");
-            // console.log("closed");
-            clearInterval(cbid);
-        }).pipe(zlib.createGzip({
-            level: zlib.Z_BEST_COMPRESSION
-        })).pipe(splitter);
+		// let filedir = [path.join(filepath, file)];
+		var pack = new AnonStream({
+			dbhandle: db,
+			filepath: filepath,
+			entries: file ? [file] : undefined,
+			map: function(header) {
+				//console.log(header);
+				if (calculating)
+					options.progressObject.total_size += header.size;
+			}
+		}).on("data", (chunk) => {
+			options.progressObject.bytes_read += chunk.length;
+			options.progressObject.rate = ((options.progressObject.bytes_read / (1024 * 1024)) / ((new Date() - zipStart) / 1000));
+			options.progressObject.eta = (options.progressObject.total_size - options.progressObject.bytes_read) / (options.progressObject.rate * 1024 * 1024);
+		}).on("end", function() {
+			console.log("closed");
+			log.info({ trace: new Error().stack }, "Study zipped");
+			// console.log("closed");
+			clearInterval(cbid);
+		}).pipe(zlib.createGzip({
+			level: zlib.Z_BEST_COMPRESSION
+		})).pipe(splitter);
 
 		options.cancel_cb(() => {
 			pack.cork();
