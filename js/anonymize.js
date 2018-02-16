@@ -267,7 +267,7 @@ function init(options, db) {
 		let element = dicom.elements[tag];
 		let value = dicom.string(tag);
 		if (value !== undefined) {
-			let newValue = makeRandomString(dicom.string(tag));
+			let newValue = hash_name(dicom.string(tag));
 			if (element)
 				dicom.byteArray.write(newValue, element.dataOffset, element.length);
 			return dicom.string(tag);
@@ -294,7 +294,7 @@ function hash_name(name) {
 	return hash;
 }
 
-function makeRandomString(tag)
+/*function makeRandomString(tag)
 {
 	let name = tag.toString();
 	let text = "";
@@ -305,7 +305,7 @@ function makeRandomString(tag)
 		text += possible.charAt(Math.floor(Math.random() * possible.length));
 
 	return text;
-}
+}*/
 
 
 

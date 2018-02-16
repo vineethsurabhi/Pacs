@@ -38,7 +38,7 @@ function rand_name() {
 }
 
 function init(options) {
-	var zipStart;
+	var anonymizeStart;
 	var file = null;
 	var filepath = options.filepath;
 	var token = options.token;
@@ -80,7 +80,7 @@ function init(options) {
 
 
 	function get_zip_pipe() {
-		zipStart = new Date();
+    anonymizeStart = new Date();
 		var calculating = true;
 		var cbid = setInterval(options.zip_cb, 1000, options.progressObject);
 
@@ -113,7 +113,7 @@ function init(options) {
 			}
 		}).on("data", (chunk) => {
 			options.progressObject.bytes_read += chunk.length;
-			options.progressObject.rate = ((options.progressObject.bytes_read / (1024 * 1024)) / ((new Date() - zipStart) / 1000));
+			options.progressObject.rate = ((options.progressObject.bytes_read / (1024 * 1024)) / ((new Date() - anonymizeStart) / 1000));
 			options.progressObject.eta = (options.progressObject.total_size - options.progressObject.bytes_read) / (options.progressObject.rate * 1024 * 1024);
 		}).on("end", function() {
 			console.log("closed");
@@ -248,9 +248,7 @@ function init(options) {
 					send_manifest(5);
 					return;
 				}
-				console.log("counter values");
 				console.log(counter, options.progressObject.parts);
-
 				console.log("sending part ", counter + 1);
 				options.progressObject.part = counter + 1;
 				req = send_request(`${api}/upload_part`, token, filename + ".part" + counter, next);

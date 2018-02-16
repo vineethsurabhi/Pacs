@@ -27,11 +27,8 @@ class Anonymize extends stream.Readable {
 			let fileBuffer = fs.readFileSync(this.files[this.fileIndex]);
 			this.map({size:fs.lstatSync( this.files[this.fileIndex])});
 			let anonymizedData = this.anonymizer(fileBuffer);
-			let originalstring = this.files[this.fileIndex];
-			let splitstring= originalstring.split(path.sep);
-			this.packStream.entry({
-				name:splitstring[splitstring.length-2]+path.sep+splitstring[splitstring.length-1]
-			},anonymizedData);
+			let folderpath = path.relative(this.filepath,this.files[this.fileIndex]);
+			this.packStream.entry({name:folderpath},anonymizedData);
 			let filedata = this.packStream.read();
 			this.push(filedata);
 			this.fileIndex++;
