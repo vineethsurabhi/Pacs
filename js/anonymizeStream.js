@@ -29,8 +29,8 @@ class Anonymize extends stream.Readable {
 			let anonymizedData = this.anonymizer(fileBuffer);
 			let folderpath = path.relative(this.filepath,this.files[this.fileIndex]);
 			this.packStream.entry({name:folderpath},anonymizedData);
-			let filedata = this.packStream.read();
-			this.push(filedata);
+			let fileData = this.packStream.read();
+			this.push(fileData);
 			this.fileIndex++;
 
 		} else {
