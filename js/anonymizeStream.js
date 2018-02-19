@@ -9,8 +9,7 @@ const anonymize = require("./anonymize.js");
 class Anonymize extends stream.Readable {
 
 	constructor(options) {
-
-		super(options);
+	  super(options);
 		this.filepath = options.filepath;
 		this.files = flatten_filetree(this.filepath);
 		this.map = options.map;
@@ -18,13 +17,11 @@ class Anonymize extends stream.Readable {
 		this.dbhandle = options.dbhandle;
 		this.anonymizer = anonymize.init(options, this.dbhandle);
 		this.packStream = tar.pack();
-
 	}
 
 	_read() {
-
-		if (this.fileIndex < this.files.length) {
-			let fileBuffer = fs.readFileSync(this.files[this.fileIndex]);
+		if (this.fileIndex < this.files.length )
+		{ let fileBuffer = fs.readFileSync(this.files[this.fileIndex]);
 			this.map({size:fs.lstatSync( this.files[this.fileIndex])});
 			let anonymizedData = this.anonymizer(fileBuffer);
 			let folderpath = path.relative(this.filepath,this.files[this.fileIndex]);
@@ -32,10 +29,9 @@ class Anonymize extends stream.Readable {
 			let fileData = this.packStream.read();
 			this.push(fileData);
 			this.fileIndex++;
-
-		} else {
-
-			this.push(null);
+		}
+		else {
+		  this.push(null);
 		}
 	}
 }
@@ -48,7 +44,8 @@ function flatten_filetree (dir, files_){
 		if (fs.statSync(name).isDirectory()){
 			flatten_filetree(name, files_);
 		} else {
-			files_.push(name);
+		  if (path.extname(name)===".dcm")
+				files_.push(name);
 		}
 	}
 	return files_;

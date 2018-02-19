@@ -111,11 +111,11 @@ function init(options, db) {
 						},
 						studyDate: {
 							value: dcm.string(dictionary.studyDate),
-							translation: anonymizetag(dcm, dictionary.studyDate),
+							translation: anonymizeDate(dcm, dictionary.studyDate),
 						},
 						studyTime: {
 							value: dcm.string(dictionary.studyTime),
-							translation: anonymizetag(dcm, dictionary.studyTime)
+							translation: anonymizeTime(dcm, dictionary.studyTime)
 						},
 						seriesNumber: {
 							value: dcm.string(dictionary.seriesNumber),
@@ -123,11 +123,11 @@ function init(options, db) {
 						},
 						seriesDate: {
 							value: dcm.string(dictionary.seriesDate),
-							translation: anonymizetag(dcm, dictionary.seriesDate)
+							translation: anonymizeDate(dcm, dictionary.seriesDate)
 						},
 						seriesTime: {
 							value: dcm.string(dictionary.seriesTime),
-							translation: anonymizetag(dcm, dictionary.seriesTime)
+							translation: anonymizeTime(dcm, dictionary.seriesTime)
 						},
 						bodyPartExamined: {
 							value: dcm.string(dictionary.bodyPartExamined),
@@ -139,11 +139,11 @@ function init(options, db) {
 						},
 						acquistionDate: {
 							value: dcm.string(dictionary.acquisitionDate),
-							translation: anonymizetag(dcm, dictionary.acquisitionDate)
+							translation: anonymizeDate(dcm, dictionary.acquisitionDate)
 						},
 						acquistionTime: {
 							value: dcm.string(dictionary.acquistionTime),
-							translation: anonymizetag(dcm, dictionary.acquistionTime)
+							translation: anonymizeTime(dcm, dictionary.acquistionTime)
 						},
 						manufacturer: {
 							value: dcm.string(dictionary.manufacturer),
@@ -210,11 +210,11 @@ function init(options, db) {
 			studyDate: {
 				value: dcm.string(dictionary.studyDate),
 
-				translation: anonymizetag(dcm, dictionary.studyDate),
+				translation: anonymizeDate(dcm, dictionary.studyDate),
 			},
 			studyTime: {
 				value: dcm.string(dictionary.studyTime),
-				translation: anonymizetag(dcm, dictionary.studyTime)
+				translation: anonymizeTime(dcm, dictionary.studyTime)
 			},
 			seriesNumber: {
 				value: dcm.string(dictionary.seriesNumber),
@@ -222,11 +222,11 @@ function init(options, db) {
 			},
 			seriesDate: {
 				value: dcm.string(dictionary.seriesDate),
-				translation: anonymizetag(dcm, dictionary.seriesDate)
+				translation: anonymizeDate(dcm, dictionary.seriesDate)
 			},
 			seriesTime: {
 				value: dcm.string(dictionary.seriesTime),
-				translation: anonymizetag(dcm, dictionary.seriesTime)
+				translation: anonymizeTime(dcm, dictionary.seriesTime)
 			},
 			bodyPartExamined: {
 				value: dcm.string(dictionary.bodyPartExamined),
@@ -238,11 +238,11 @@ function init(options, db) {
 			},
 			acquistionDate: {
 				value: dcm.string(dictionary.acquisitionDate),
-				translation: anonymizetag(dcm, dictionary.acquisitionDate)
+				translation: anonymizeDate(dcm, dictionary.acquisitionDate)
 			},
 			acquistionTime: {
 				value: dcm.string(dictionary.acquistionTime),
-				translation: anonymizetag(dcm, dictionary.acquistionTime)
+				translation: anonymizeTime(dcm, dictionary.acquistionTime)
 			},
 			manufacturer: {
 				value: dcm.string(dictionary.manufacturer),
@@ -273,6 +273,27 @@ function init(options, db) {
 			return dicom.string(tag);
 		}
 	}
+
+	function anonymizeDate(dicom,tag){
+		let element = dicom.elements[tag];
+		let value =dicom.string(tag);
+	  if(value !== undefined){
+			let newValue = current_date(dicom.string(tag));
+			if (element)
+				dicom.byteArray.write(newValue, element.dataOffset, element.length);
+			return dicom.string(tag);
+		}
+	}
+	function anonymizeTime(dicom,tag){
+		let element = dicom.elements[tag];
+		let value =dicom.string(tag);
+		if(value !== undefined){
+			let newValue = current_time(dicom.string(tag));
+			if (element)
+				dicom.byteArray.write(newValue, element.dataOffset, element.length);
+			return dicom.string(tag);
+		}
+	}
 	return anonymize;
 }
 
@@ -292,6 +313,21 @@ function hash_name(name) {
 	md5.update(name);
 	var hash = md5.digest().toString("hex");
 	return hash;
+}
+
+function pad(num, size) {
+	var s = num+"";
+	while (s.length < size) s = "0" + s;
+	return s;
+}
+function current_date () {
+	var now = new Date();
+	return now.getYear() + 1900 + pad(now.getMonth() + 1, 2) + pad(now.getDate(), 2);
+
+}
+function current_time () {
+	var now = new Date();
+	return pad(now.getHours(), 2) + pad(now.getMinutes(), 2) + pad(now.getSeconds(), 2);
 }
 
 /*function makeRandomString(tag)
