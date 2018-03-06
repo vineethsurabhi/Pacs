@@ -1,0 +1,1 @@
+           CREATE TABLE studyInterface(id INTEGER PRIMARY KEY AUTOINCREMENT,studyInstanceUID varchar(100) UNIQUE, AnonStudyInstanceUID varchar(100),seriesInstanceUID varchar(100) UNIQUE,anonSeriesInstanceUID varchar(100), sopInstanceUID varchar(100) UNIQUE, AnonSopInstanceUID varchar(100);

@@ -38,6 +38,8 @@ function init(options, db) {
 	let maps = {};
 
 	db.run("CREATE TABLE IF NOT EXISTS userInterface(id INTEGER , userID varchar(100) ,studyInstanceUID varchar(100) PRIMARY KEY)");
+	db.run("CREATE TABLE IF NOT EXISTS series(id INTEGER ,  studyInstanceUID varchar(100) ,seriesInstanceUID varchar(100) )");
+
 	db.run("CREATE TABLE IF NOT EXISTS studyInterface(id INTEGER PRIMARY KEY AUTOINCREMENT,studyInstanceUID varchar(100) , anonStudyInstanceUID varchar(100),seriesInstanceUID varchar(100) ,anonSeriesInstanceUID varchar(100), sopInstanceUID varchar(100) , anonSopInstanceUID varchar(100),FOREIGN KEY(studyInstanceUID) REFERENCES userInterface(studyInstanceUID))");
 	db.run("CREATE TABLE IF NOT EXISTS tags(id INTEGER PRIMARY KEY AUTOINCREMENT,anonSopInstanceUID varchar(100),tagName varchar(100), oldValue varchar(1000),anonValue varchar(1000) ,FOREIGN KEY(anonSopInstanceUID) REFERENCES studyInterface(anonSopInstanceUID))");
 
@@ -47,6 +49,9 @@ function init(options, db) {
 			let userTableStmt = db.prepare("INSERT or REPLACE into userInterface(userID,studyInstanceUID) values(?,?)");
 			userTableStmt.run(localStorage.getItem("user"),studyInstanceUID);
 			userTableStmt.finalize();
+			let seriesTableStmt = db.prepare("INSERT or REPLACE into series(studyInstanceUID,seriesInstanceUID) values(?,?)");
+			seriesTableStmt.run(studyInstanceUID,seriesInstanceUID);
+			seriesTableStmt.finalize();
 			let studyTableStmt = db.prepare("INSERT or REPLACE into studyInterface(studyInstanceUID,AnonStudyInstanceUID,seriesInstanceUID,AnonSeriesInstanceUID,sopInstanceUID,AnonSopInstanceUID) values(?,?,?,?,?,?)");
 			studyTableStmt.run(studyInstanceUID, maps[studyInstanceUID].translation, seriesInstanceUID, maps[studyInstanceUID].series[seriesInstanceUID].translation, sopInstanceUID, maps[studyInstanceUID].series[seriesInstanceUID].sopInstances[sopInstanceUID].sopInstanceUID.translation);
 			studyTableStmt.finalize();
@@ -64,13 +69,14 @@ function init(options, db) {
 		let dcm = dicomParser.parseDicom(filebuffer);
 		let studyInstanceUID = dcm.string(dictionary.studyInstanceUID);
 		let seriesInstanceUID = dcm.string(dictionary.seriesInstanceUID);
+		console.log(seriesInstanceUID);
 		let sopInstanceUID = dcm.string(dictionary.sopInstanceUID);
 		if (!maps[studyInstanceUID]) {
 			maps[studyInstanceUID] = {
 				translation: anonymizetag(dcm, dictionary.studyInstanceUID),
 				series: {}
 			};
-			if (!maps[studyInstanceUID].series[seriesInstanceUID])  {
+			if (!maps[studyInstanceUID].series[seriesInstanceUID]) {
 				maps[studyInstanceUID].series[seriesInstanceUID] = {
 					translation: anonymizetag(dcm, dictionary.seriesInstanceUID),
 					sopInstances: {}
@@ -163,7 +169,7 @@ function init(options, db) {
 			}
 			return dcm.byteArray;
 		}
-
+		
 
 		let bytearray = anonymizeSecond(dcm);
 		maps[studyInstanceUID] = {
@@ -174,6 +180,9 @@ function init(options, db) {
 			translation: anonymizetag(dcm, dictionary.seriesInstanceUID),
 			sopInstances: {}
 		};
+		// console.log(maps[studyInstanceUID].series[seriesInstanceUID]);
+
+		//console.log(maps[studyInstanceUID].series[seriesInstanceUID].translation);
 		maps[studyInstanceUID].series[seriesInstanceUID].sopInstances[sopInstanceUID] = {
 			sopInstanceUID: {
 				value: sopInstanceUID,
@@ -257,10 +266,12 @@ function init(options, db) {
 				translation: anonymizetag(dcm, dictionary.ReferringPhysicianName)
 			},
 
-
 		};
-		return bytearray;
+		add_entry(studyInstanceUID, seriesInstanceUID, sopInstanceUID);
 
+		return bytearray;
+    
+		
 	}
 
 	function anonymizetag(dicom, tag) {
@@ -277,7 +288,7 @@ function init(options, db) {
 	function anonymizeDate(dicom,tag){
 		let element = dicom.elements[tag];
 		let value =dicom.string(tag);
-	  if(value !== undefined){
+		if(value !== undefined){
 			let newValue = current_date(dicom.string(tag));
 			if (element)
 				dicom.byteArray.write(newValue, element.dataOffset, element.length);
@@ -329,21 +340,3 @@ function current_time () {
 	var now = new Date();
 	return pad(now.getHours(), 2) + pad(now.getMinutes(), 2) + pad(now.getSeconds(), 2);
 }
-
-/*function makeRandomString(tag)
-{
-	let name = tag.toString();
-	let text = "";
-	let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01" +
-    "23456789";
-
-	for( let i=0; i < name.length; i++ )
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-	return text;
-}*/
-
-
-
-
-

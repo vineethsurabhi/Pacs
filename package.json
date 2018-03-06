@@ -1,12 +1,19 @@
 {
   "name": "predex",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "Allows users to upload DICOM files to the predible cloud for processing.",
   "build": {
     "appId": "com.electron.PredEx",
     "productName": "PredEx",
     "copyright": "Copyright © 2017 Predible",
     "asar": true,
+    "mac": {
+      "category": "your.app.category.type",
+      "target": [
+        "zip",
+        "dmg"
+      ]
+    },
     "win": {
       "target": "nsis",
       "publisherName": "Predible Health"
@@ -32,6 +39,7 @@
   },
   "main": "main.js",
   "scripts": {
+    "publish": "build -p always",
     "start": "electron .",
     "package": "electron-builder .",
     "postinstall": "npm run package",
@@ -49,6 +57,8 @@
     "bunyan": "^1.8.12",
     "dicom-parser": "^1.7.6",
     "electron-cookies": "^1.1.0",
+    "electron-log": "^1.3.0",
+    "electron-updater": "^2.18.2",
     "get-folder-size": "^1.0.0",
     "moment": "^2.19.1",
     "node-dir": "^0.1.17",

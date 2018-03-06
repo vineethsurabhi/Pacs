@@ -1,5 +1,5 @@
 {
     "urls": {
-        "API":"https://liver.prediblehealth.com"
+        "API":"http://192.168.3.90:9090"
     }
 }

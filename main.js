@@ -4,12 +4,19 @@ const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
 
-const path = require("path");
-const url = require("url");
+const { Menu, protocol, ipcMain} = require('electron');
+//const log = require('electron-log');
+const {autoUpdater} = require("electron-updater");
 
 const settings = require("./config.json");
 
-//const request = require("request");
+//const request = require("request")
+/*autoUpdater.logger= log;
+autoUpdater.logger.transports.file.level = 'info';
+log('App starting...');*/
+
+
+
 var bunyan = require("bunyan");
 var logBuffer = [];
 
@@ -19,6 +26,12 @@ function DataLogger() {}
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
+function sendStatusToWindow(text) {
+  //log(text);
+  mainWindow.webContents.send('message', text);
+}
+
+
 function createWindow() {
 	// Create the browser window.
 	mainWindow = new BrowserWindow({ width: 1200, height: 680, resize: true});
@@ -26,11 +39,13 @@ function createWindow() {
 	mainWindow.flashFrame(true);
 	createLogger();
 	// and load the index.html of the app.
-	mainWindow.loadURL(url.format({
+    mainWindow.loadURL(`file://${__dirname}/index.html#v${app.getVersion()}`);
+
+	/*mainWindow.loadURL(url.format({
 		pathname: path.join(__dirname, "index.html"),
 		protocol: "file:",
 		slashes: true
-	}));
+	}));*/
 
 	// Open the DevTools.
 	if (settings.debug)
@@ -50,6 +65,27 @@ function createWindow() {
 		mainWindow = null;
 	});
 }
+autoUpdater.on('checking-for-update', () => {
+  sendStatusToWindow('Checking for update...');
+});
+autoUpdater.on('update-available', (info) => {
+  sendStatusToWindow('Update available.');
+});
+autoUpdater.on('update-not-available', (info) => {
+  sendStatusToWindow('Update not available.');
+});
+autoUpdater.on('error', (err) => {
+  sendStatusToWindow('Error in auto-updater. ' + err);
+});
+autoUpdater.on('download-progress', (progressObj) => {
+  let log_message = "Download speed: " + progressObj.bytesPerSecond;
+  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+  log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+  sendStatusToWindow(log_message);
+});
+autoUpdater.on('update-downloaded', (info) => {
+  sendStatusToWindow('Update downloaded');
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -63,6 +99,10 @@ app.on("window-all-closed", function() {
 	if (process.platform !== "darwin") {
 		app.quit();
 	}
+});
+
+app.on('ready', function()  {
+  autoUpdater.checkForUpdatesAndNotify();
 });
 
 app.on("activate", function() {

@@ -1,0 +1,32 @@
+directories:
+  output: dist
+  buildResources: build
+appId: com.electron.PredEx
+productName: PredEx
+copyright: Copyright © 2017 Predible
+asar: true
+mac:
+  category: your.app.category.type
+  target:
+    - zip
+    - dmg
+win:
+  target: nsis
+  publisherName: Predible Health
+files:
+  - js/**
+  - images/**
+  - css/**
+  - '*.html'
+  - '*.js'
+  - '*.md'
+  - '!*.tar.gz'
+  - '*.json'
+nsis:
+  oneClick: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  runAfterFinish: false
+  createDesktopShortcut: true
+  installerHeader: build/header.png
+electronVersion: 1.7.10
